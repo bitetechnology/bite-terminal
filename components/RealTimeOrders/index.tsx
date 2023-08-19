@@ -1,47 +1,42 @@
-import "../app/globals.css";
+"use client";
+
 import { supabase } from "@/utils/supabaseClient";
 import { useEffect, useState } from "react";
-import OrderSkeleton from "@/components/OrderSkeleton";
-import Navbar2 from "@/components/Navbar2";
-import OrderStates from "@/components/OrderStates";
+import OrderSkeleton from "../OrderSkeleton";
+import Navbar2 from "../Navbar2";
+import OrderStates from "../OrderStates";
 import { Database } from "@bitetechnology/bite-types";
 
-export default function Order() {
+export default function RealTimeOrders({
+  serverOrders,
+}: {
+  serverOrders: any;
+}) {
   const [orders, setOrders] = useState<
     Database["public"]["Tables"]["orders"]["Row"][] | []
   >([]);
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      const { data } = await supabase
-        .from("orders")
-        .select()
-        .eq("restaurant_id", "84");
-      if (data) setOrders(data);
-    };
+    setOrders(serverOrders);
+  }, [serverOrders]);
 
-    fetchOrders();
-
-    const subscription = supabase
-      .channel("orders-db-changes")
+  useEffect(() => {
+    const channel = supabase
+      .channel("*")
       .on(
         "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "orders",
-          filter: "restaurant_id=eq.84",
-        },
+        { event: "*", schema: "public", table: "orders" },
         (payload) => {
-          setOrders((prev) => [...prev, payload.new as any]);
+          setOrders((orders: any) => [payload.new, ...orders]);
         }
       )
       .subscribe();
 
     return () => {
-      supabase.removeChannel(subscription);
+      supabase.removeChannel(channel);
     };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [supabase, orders, setOrders]);
 
   return orders && orders.length > 0 ? (
     <div
