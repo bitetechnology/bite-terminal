@@ -4,9 +4,12 @@ import { CheckIcon, XCircleIcon } from "@heroicons/react/20/solid";
 import { supabase } from "@/utils/supabaseClient";
 import { useEffect, useState } from "react";
 import OrderSkeleton from "@/components/OrderSkeleton";
+import { Database } from "@bitetechnology/bite-types";
 
 export default function Order() {
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState<
+    Database["public"]["Tables"]["orders"]["Row"][] | []
+  >([]);
   useEffect(() => {
     const fetchOrders = async () => {
       const { data } = await supabase
@@ -14,7 +17,7 @@ export default function Order() {
         .select()
         .eq("restaurant_id", "84");
       console.log({ data });
-      setOrders(data);
+      if (data) setOrders(data);
     };
     fetchOrders();
     const subscription = supabase
@@ -29,7 +32,7 @@ export default function Order() {
         },
         (payload) => {
           console.log({ payload });
-          setOrders((prev) => [...prev, payload.new]);
+          setOrders((prev) => [...prev, payload.new as any]);
         }
       )
       .subscribe();
@@ -40,7 +43,7 @@ export default function Order() {
     };
   }, []);
 
-  return orders.length > 0 ? (
+  return orders && orders.length > 0 ? (
     <div className="min-h-screen bg-white flex items-center justify-center text-black">
       <div className="p-8 w-3/4">
         <h1 className="text-xl font-semibold mb-4">Orders</h1>
@@ -75,34 +78,38 @@ export default function Order() {
                 )}
               </div>
 
-              {order.deliverect_order.items.map((item) => (
-                <div key={item.id} className="mt-2">
-                  <p className="text-lg font-medium text-black">
-                    {item.name || "N/A"}
-                  </p>
-                  <p className="text-sm">
-                    Price: ${(item.price / 100).toFixed(2)}
-                  </p>
-                  <p className="text-sm">Quantity: {item.quantity}</p>
+              {order.deliverect_order &&
+                typeof order.deliverect_order === "object" &&
+                "items" in order.deliverect_order &&
+                Array.isArray(order.deliverect_order.items) &&
+                order.deliverect_order.items?.map((item: any) => (
+                  <div key={item.id} className="mt-2">
+                    <p className="text-lg font-medium text-black">
+                      {item.name || "N/A"}
+                    </p>
+                    <p className="text-sm">
+                      Price: ${(item.price / 100).toFixed(2)}
+                    </p>
+                    <p className="text-sm">Quantity: {item.quantity}</p>
 
-                  {/* Display subItems if available */}
-                  {item.subItems && item.subItems.length > 0 && (
-                    <div className="ml-4 mt-2">
-                      {item.subItems.map((subItem) => (
-                        <div key={subItem.id}>
-                          <p className="text-xs text-black">{subItem.name}</p>
-                          <p className="text-xs">
-                            Price: ${(subItem.price / 100).toFixed(2)}
-                          </p>
-                          <p className="text-xs">
-                            Quantity: {subItem.quantity}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
+                    {/* Display subItems if available */}
+                    {item.subItems && item.subItems.length > 0 && (
+                      <div className="ml-4 mt-2">
+                        {item.subItems.map((subItem: any) => (
+                          <div key={subItem.id}>
+                            <p className="text-xs text-black">{subItem.name}</p>
+                            <p className="text-xs">
+                              Price: ${(subItem.price / 100).toFixed(2)}
+                            </p>
+                            <p className="text-xs">
+                              Quantity: {subItem.quantity}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
             </li>
           ))}
         </ul>
