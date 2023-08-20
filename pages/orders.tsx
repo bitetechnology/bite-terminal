@@ -78,24 +78,9 @@ export default function Order() {
                 )}
               </span>
               <div className="space-x-2 mt-1 mb-1 flex flex-wrap">
-                <OrderStates
-                  className="text-xs sm:text-sm"
-                  style={{ padding: "2px 6px" }}
-                  color="red"
-                  label="Cancel"
-                />
-                <OrderStates
-                  className="text-xs sm:text-sm"
-                  style={{ padding: "2px 6px" }}
-                  color="yellow"
-                  label="In preparation"
-                />
-                <OrderStates
-                  className="text-xs sm:text-sm"
-                  style={{ padding: "2px 6px" }}
-                  color="green"
-                  label="Ready to pick up"
-                />
+                <OrderStates color="red" label="Cancel" />
+                <OrderStates color="yellow" label="In preparation" />
+                <OrderStates color="green" label="Ready to pick up" />
               </div>
             </div>
 
@@ -134,7 +119,7 @@ export default function Order() {
                       </td>
                       <td className="px-4 py-5 text-md text-gray-800">
                         {item.subItems && item.subItems.length > 0
-                          ? item.subItems.map((subItem) => (
+                          ? item.subItems.map((subItem: any) => (
                               <p key={subItem.id} className="text-md">
                                 {subItem.name} - €
                                 {(subItem.price / 100).toFixed(2)} x{" "}
@@ -148,7 +133,7 @@ export default function Order() {
 
                 <tr className="bg-gray-200">
                   <td
-                    colSpan="4"
+                    colSpan={4}
                     className="px-4 py-2 text-right text-md font-bold"
                   >
                     Total: {}
@@ -161,6 +146,13 @@ export default function Order() {
       </div>
     </div>
   ) : (
-    <OrderSkeleton />
+    <div className="min-h-screen flex flex-col items-center p-10">
+      <Navbar2 />
+      <div className="w-full mt-10 flex flex-col items-center">
+        <OrderSkeleton />
+        <OrderSkeleton />
+        <OrderSkeleton />
+      </div>
+    </div>
   );
 }
