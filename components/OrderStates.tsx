@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
 interface Props {
-  color: 'red' | 'yellow' | 'green';
+  color: "red" | "yellow" | "green";
   label: string;
-  onClick?: () => void; 
+  onClick?: () => void;
 }
 
 const OrderStates: React.FC<Props> = ({ color, label, onClick }) => {
@@ -13,21 +13,21 @@ const OrderStates: React.FC<Props> = ({ color, label, onClick }) => {
       text: "text-red-500",
       hoverBackground: "hover:bg-red-600",
       hoverText: "hover:text-white",
-      focusRing: "focus:ring-red-500"
+      focusRing: "focus:ring-red-500",
     },
     yellow: {
       background: "bg-yellow-100",
       text: "text-yellow-500",
       hoverBackground: "hover:bg-yellow-600",
       hoverText: "hover:text-white",
-      focusRing: "focus:ring-yellow-500"
+      focusRing: "focus:ring-yellow-500",
     },
     green: {
       background: "bg-green-100",
       text: "text-green-500",
       hoverBackground: "hover:bg-green-600",
       hoverText: "hover:text-white",
-      focusRing: "focus:ring-green-500"
+      focusRing: "focus:ring-green-500",
     },
   };
 
