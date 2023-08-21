@@ -16,6 +16,7 @@ export async function updateOrder(updatedData: {
       }
     );
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.log(error);
   }
   //   const { data, error } = await supabase.functions.invoke(
