@@ -1,11 +1,13 @@
 "use client";
 
 import { supabase } from "@/utils/supabaseClient";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import OrderSkeleton from "../OrderSkeleton";
 import Navbar2 from "../Navbar2";
 import OrderStates from "../OrderStates";
 import { Database } from "@bitetechnology/bite-types";
+import { OrderStatus } from "@/utils/orderStatus";
+import { updateOrder } from "@/utils/updateStatus";
 
 export default function RealTimeOrders({
   serverOrders,
@@ -37,6 +39,15 @@ export default function RealTimeOrders({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [supabase, orders, setOrders]);
+
+  const handleStatusChange = useCallback(
+    (status: number, orderId: number) => async () =>
+      updateOrder({
+        status,
+        channelOrderId: orderId,
+      }),
+    []
+  );
 
   return orders && orders.length > 0 ? (
     <div
@@ -73,9 +84,24 @@ export default function RealTimeOrders({
                 )}
               </span>
               <div className="space-x-2 mt-1 mb-1 flex flex-wrap">
-                <OrderStates color="red" label="Cancel" />
-                <OrderStates color="yellow" label="In preparation" />
-                <OrderStates color="green" label="Ready to pick up" />
+                <OrderStates
+                  color="red"
+                  label="Cancel"
+                  onClick={handleStatusChange(OrderStatus.canceled, order.id)}
+                />
+                <OrderStates
+                  color="yellow"
+                  label="In preparation"
+                  onClick={handleStatusChange(OrderStatus.preparing, order.id)}
+                />
+                <OrderStates
+                  color="green"
+                  label="Ready to pick up"
+                  onClick={handleStatusChange(
+                    OrderStatus.pickup_ready,
+                    order.id
+                  )}
+                />
               </div>
             </div>
 
@@ -131,7 +157,7 @@ export default function RealTimeOrders({
                     colSpan={4}
                     className="px-4 py-2 text-right text-md font-bold"
                   >
-                    Total: {}
+                    {`Total: ${order.total && order.total / 100}€`}
                   </td>
                 </tr>
               </tbody>
