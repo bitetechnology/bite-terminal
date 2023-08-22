@@ -9,14 +9,14 @@ import { Database } from "@bitetechnology/bite-types";
 import { OrderStatus } from "@/utils/orderStatus";
 import { updateOrder } from "@/utils/updateStatus";
 
+type OrderFromSupabase = Database["public"]["Tables"]["orders"]["Row"];
+
 export default function RealTimeOrders({
   serverOrders,
 }: {
   serverOrders: any;
 }) {
-  const [orders, setOrders] = useState<
-    Database["public"]["Tables"]["orders"]["Row"][] | []
-  >([]);
+  const [orders, setOrders] = useState<OrderFromSupabase[] | []>([]);
 
   useEffect(() => {
     setOrders(serverOrders);
@@ -29,7 +29,25 @@ export default function RealTimeOrders({
         "postgres_changes",
         { event: "*", schema: "public", table: "orders" },
         (payload) => {
-          setOrders((orders: any) => [payload.new, ...orders]);
+          setOrders((prevOrders: any) => {
+            const newOrder = payload.new as OrderFromSupabase;
+
+            if (
+              prevOrders.find(
+                (order: OrderFromSupabase) => order.id === newOrder.id
+              )
+            ) {
+              const listOfOrders = [
+                newOrder,
+                ...prevOrders.filter(
+                  (order: OrderFromSupabase) => order.id !== newOrder.id
+                ),
+              ];
+              return listOfOrders.sort((a, b) => b.id - a.id);
+            } else {
+              return [...prevOrders, newOrder];
+            }
+          });
         }
       )
       .subscribe();
