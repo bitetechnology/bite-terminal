@@ -12,7 +12,7 @@ export default async function Order() {
   return (
     <>
       <Head>
-        <title>Bite terminal</title>
+        <title>Bite terminal | orders</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
 
