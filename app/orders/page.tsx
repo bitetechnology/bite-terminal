@@ -1,9 +1,18 @@
 import RealTimeOrders from "@/components/RealTimeOrders";
-import { supabase } from "@/utils/supabaseClient";
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import Head from "next/head";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export const revalidate = 60;
 export default async function Order() {
+  const supabase = createServerComponentClient({ cookies });
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session) return redirect("/");
+
   const { data } = await supabase
     .from("orders")
     .select()
