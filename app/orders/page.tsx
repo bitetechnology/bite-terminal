@@ -4,6 +4,8 @@ import Head from "next/head";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 export const revalidate = 60;
 export default async function Order() {
   const supabase = createServerComponentClient({ cookies });
