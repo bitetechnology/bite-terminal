@@ -3,7 +3,7 @@ import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const navigation = [{ name: "Orders", href: "/orders", current: true }];
 
@@ -13,10 +13,11 @@ function classNames(...classes: string[]) {
 
 export default function Example() {
   const supabase = createClientComponentClient();
+  const { push } = useRouter();
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    redirect("/");
+    push("/");
   };
 
   return (

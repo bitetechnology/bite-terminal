@@ -17,6 +17,7 @@ export default function RealTimeOrders({
   serverOrders: any;
 }) {
   const [orders, setOrders] = useState<OrderFromSupabase[] | []>([]);
+  const [showComponent, setShowComponent] = useState(false);
 
   useEffect(() => {
     setOrders(serverOrders);
@@ -67,10 +68,14 @@ export default function RealTimeOrders({
     []
   );
 
+  setTimeout(() => {
+    setShowComponent(true);
+  }, 1500);
+
   return (
     <>
       <Navbar />
-      {orders && orders.length > 0 ? (
+      {orders && orders.length > 0 && showComponent ? (
         <div
           className="min-h-screen flex flex-col items-center p-10"
           style={{
@@ -91,43 +96,59 @@ export default function RealTimeOrders({
                   <span className="font-black text-xl">
                     <span className="text-green-400">#</span>
                     <span className="text-black">{order.id}</span>
-                    {order.status ? (
+                    {order.status === "pickup_ready" && (
                       <span className="inline-flex items-center gap-1 py-0.5 px-2 ml-4 rounded-full text-sm font-bold bg-green-500 text-white">
                         {order.status.charAt(0).toUpperCase() +
                           order.status.slice(1)}
                       </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 py-0.5 px-2 ml-4 rounded-full text-sm font-bold bg-green-500 text-white">
-                        Accepted
+                    )}
+                    {order.status === "canceled" && (
+                      <span className="inline-flex items-center gap-1 py-0.5 px-2 ml-4 rounded-full text-sm font-bold bg-red-500 text-white">
+                        {order.status.charAt(0).toUpperCase() +
+                          order.status.slice(1)}
+                      </span>
+                    )}
+                    {(order.status === "preparing" ||
+                      order.status === "pending") && (
+                      <span className="inline-flex items-center gap-1 py-0.5 px-2 ml-4 rounded-full text-sm font-bold bg-yellow-500 text-white">
+                        {order.status.charAt(0).toUpperCase() +
+                          order.status.slice(1)}
+                      </span>
+                    )}
+                    {order.status === null && (
+                      <span className="inline-flex items-center gap-1 py-0.5 px-2 ml-4 rounded-full text-sm font-bold bg-yellow-500 text-white">
+                        {"pending"}
                       </span>
                     )}
                   </span>
-                  <div className="space-x-2 mt-1 mb-1 flex flex-wrap">
-                    <OrderStates
-                      color="red"
-                      label="Cancel"
-                      onClick={handleStatusChange(
-                        OrderStatus.canceled,
-                        order.id
-                      )}
-                    />
-                    <OrderStates
-                      color="yellow"
-                      label="In preparation"
-                      onClick={handleStatusChange(
-                        OrderStatus.preparing,
-                        order.id
-                      )}
-                    />
-                    <OrderStates
-                      color="green"
-                      label="Ready to pick up"
-                      onClick={handleStatusChange(
-                        OrderStatus.pickup_ready,
-                        order.id
-                      )}
-                    />
-                  </div>
+                  {(order.status === "preparing" || order.status === null) && (
+                    <div className="space-x-2 mt-1 mb-1 flex flex-wrap">
+                      <OrderStates
+                        color="red"
+                        label="Cancel"
+                        onClick={handleStatusChange(
+                          OrderStatus.canceled,
+                          order.id
+                        )}
+                      />
+                      <OrderStates
+                        color="yellow"
+                        label="In preparation"
+                        onClick={handleStatusChange(
+                          OrderStatus.preparing,
+                          order.id
+                        )}
+                      />
+                      <OrderStates
+                        color="green"
+                        label="Ready to pick up"
+                        onClick={handleStatusChange(
+                          OrderStatus.pickup_ready,
+                          order.id
+                        )}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <table className="min-w-full divide-y divide-[rgb(229,231,235)] w-full rounded-lg rounded-2xl ">
@@ -192,13 +213,7 @@ export default function RealTimeOrders({
           </div>
         </div>
       ) : (
-        <div className="min-h-screen flex flex-col items-center p-10">
-          <div className="w-full mt-10 flex flex-col items-center">
-            <OrderSkeleton />
-            <OrderSkeleton />
-            <OrderSkeleton />
-          </div>
-        </div>
+        <OrderSkeleton />
       )}
       ;
     </>
