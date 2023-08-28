@@ -89,7 +89,7 @@ export default function RealTimeOrders({
           <div className="w-full mt-10 flex flex-col items-center">
             {orders.map((order, index) => (
               <div
-                key={order.id}
+                key={`${order.id}${index}`}
                 className="card mb-10 flex flex-col w-[70vw] rounded-lg shadow-2xl"
               >
                 <div className="flex justify-between items-center w-full bg-transparent border-b border-gray-300 pb-2">
@@ -174,7 +174,7 @@ export default function RealTimeOrders({
                       "items" in order.deliverect_order &&
                       Array.isArray(order.deliverect_order.items) &&
                       order.deliverect_order.items?.map((item: any) => (
-                        <tr key={index}>
+                        <tr key={`${item.id}${index}-table`}>
                           <td className="px-4 py-5 text-md text-gray-800">
                             {item.name || "N/A"}
                           </td>
@@ -187,7 +187,10 @@ export default function RealTimeOrders({
                           <td className="px-4 py-5 text-md text-gray-800">
                             {item.subItems && item.subItems.length > 0
                               ? item.subItems.map((subItem: any) => (
-                                  <p key={subItem.id} className="text-md">
+                                  <p
+                                    key={`${subItem.id}${index}`}
+                                    className="text-md"
+                                  >
                                     {subItem.name} - €
                                     {(subItem.price / 100).toFixed(2)} x{" "}
                                     {subItem.quantity}

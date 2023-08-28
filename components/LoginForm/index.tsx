@@ -12,12 +12,17 @@ export default function LoginForm() {
   const { push } = useRouter();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email: username,
-      password: password,
-    });
-    if (!error) {
-      push("/orders");
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: username,
+        password: password,
+      });
+      if (!error) {
+        push("/orders");
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log(e);
     }
   };
   return (
