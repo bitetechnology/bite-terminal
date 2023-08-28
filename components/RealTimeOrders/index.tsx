@@ -121,7 +121,9 @@ export default function RealTimeOrders({
                       </span>
                     )}
                   </span>
-                  {(order.status === "preparing" || order.status === null) && (
+                  {(order.status === "pending" ||
+                    order.status === "preparing" ||
+                    order.status === null) && (
                     <div className="space-x-2 mt-1 mb-1 flex flex-wrap">
                       <OrderStates
                         color="red"
