@@ -2,7 +2,7 @@
 
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Image from "next/image";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
 export default function LoginForm() {
@@ -12,14 +12,21 @@ export default function LoginForm() {
   const { push } = useRouter();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email: username,
-      password: password,
-    });
-    if (!error) {
-      push("/orders");
+    e.preventDefault();
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: username,
+        password: password,
+      });
+      if (!error && data.user) {
+        push("/orders");
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log(e);
     }
   };
+
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">

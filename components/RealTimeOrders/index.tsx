@@ -1,6 +1,5 @@
 "use client";
 
-import { supabase } from "@/utils/supabaseClient";
 import { useCallback, useEffect, useState } from "react";
 import OrderSkeleton from "../OrderSkeleton";
 import OrderStates from "../OrderStates";
@@ -8,6 +7,7 @@ import { Database } from "@bitetechnology/bite-types";
 import { OrderStatus } from "@/utils/orderStatus";
 import { updateOrder } from "@/utils/updateStatus";
 import Navbar from "../Navbar";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 type OrderFromSupabase = Database["public"]["Tables"]["orders"]["Row"];
 
@@ -18,6 +18,7 @@ export default function RealTimeOrders({
 }) {
   const [orders, setOrders] = useState<OrderFromSupabase[] | []>([]);
   const [showComponent, setShowComponent] = useState(false);
+  const supabase = createClientComponentClient();
 
   useEffect(() => {
     setOrders(serverOrders);
@@ -89,7 +90,7 @@ export default function RealTimeOrders({
           <div className="w-full mt-10 flex flex-col items-center">
             {orders.map((order, index) => (
               <div
-                key={order.id}
+                key={`${order.id}${index}`}
                 className="card mb-10 flex flex-col w-[70vw] rounded-lg shadow-2xl"
               >
                 <div className="flex justify-between items-center w-full bg-transparent border-b border-gray-300 pb-2">
@@ -121,7 +122,9 @@ export default function RealTimeOrders({
                       </span>
                     )}
                   </span>
-                  {(order.status === "preparing" || order.status === null) && (
+                  {(order.status === "pending" ||
+                    order.status === "preparing" ||
+                    order.status === null) && (
                     <div className="space-x-2 mt-1 mb-1 flex flex-wrap">
                       <OrderStates
                         color="red"
@@ -174,7 +177,7 @@ export default function RealTimeOrders({
                       "items" in order.deliverect_order &&
                       Array.isArray(order.deliverect_order.items) &&
                       order.deliverect_order.items?.map((item: any) => (
-                        <tr key={index}>
+                        <tr key={`${item.id}${index}-table`}>
                           <td className="px-4 py-5 text-md text-gray-800">
                             {item.name || "N/A"}
                           </td>
@@ -187,7 +190,10 @@ export default function RealTimeOrders({
                           <td className="px-4 py-5 text-md text-gray-800">
                             {item.subItems && item.subItems.length > 0
                               ? item.subItems.map((subItem: any) => (
-                                  <p key={subItem.id} className="text-md">
+                                  <p
+                                    key={`${subItem.id}${index}`}
+                                    className="text-md"
+                                  >
                                     {subItem.name} - €
                                     {(subItem.price / 100).toFixed(2)} x{" "}
                                     {subItem.quantity}
