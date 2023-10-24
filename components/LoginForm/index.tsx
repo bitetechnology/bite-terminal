@@ -23,7 +23,7 @@ export default function LoginForm() {
       }
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.log(e);
+      console.log("error: ", e);
     }
   };
 
