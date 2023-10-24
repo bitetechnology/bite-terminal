@@ -30,6 +30,6 @@
     "typescript": "5.1.6"
   },
   "devDependencies": {
-    "@bitetechnology/bite-types": "^1.0.8"
+    "@bitetechnology/bite-types": "^1.0.12"
   }
 }

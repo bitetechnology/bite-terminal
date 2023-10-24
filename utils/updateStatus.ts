@@ -1,6 +1,7 @@
 export async function updateOrder(updatedData: {
   channelOrderId: number;
   status: number;
+  order_is_already_paid: boolean;
 }) {
   try {
     await fetch(
