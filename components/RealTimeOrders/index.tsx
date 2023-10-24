@@ -133,41 +133,42 @@ export default function RealTimeOrders({
                     )}
                   </span>
                   {order.order_is_already_paid &&
-                  (order.status === "pending" ||
-                    order.status === "preparing" ||
-                    order.status === null) ? (
-                    <div className="space-x-2 mt-1 mb-1 flex flex-wrap">
-                      <OrderStates
-                        color="red"
-                        label="Cancel"
-                        onClick={handleStatusChange(
-                          OrderStatus.canceled,
-                          order.id
-                        )}
-                      />
-                      <OrderStates
-                        color="yellow"
-                        label="In preparation"
-                        onClick={handleStatusChange(
-                          OrderStatus.preparing,
-                          order.id
-                        )}
-                      />
-                      <OrderStates
-                        color="green"
-                        label="Ready to pick up"
-                        onClick={handleStatusChange(
-                          OrderStatus.pickup_ready,
-                          order.id
-                        )}
-                      />
-                    </div>
-                  ) : (
+                    (order.status === "pending" ||
+                      order.status === "preparing" ||
+                      order.status === null) && (
+                      <div className="space-x-2 mt-1 mb-1 flex flex-wrap">
+                        <OrderStates
+                          color="red"
+                          label="Cancel"
+                          onClick={handleStatusChange(
+                            OrderStatus.canceled,
+                            order.id
+                          )}
+                        />
+                        <OrderStates
+                          color="yellow"
+                          label="In preparation"
+                          onClick={handleStatusChange(
+                            OrderStatus.preparing,
+                            order.id
+                          )}
+                        />
+                        <OrderStates
+                          color="green"
+                          label="Ready to pick up"
+                          onClick={handleStatusChange(
+                            OrderStatus.pickup_ready,
+                            order.id
+                          )}
+                        />
+                      </div>
+                    )}
+                  {!order.order_is_already_paid && (
                     <OrderStates
                       color="green"
                       label="Paid"
                       onClick={handleStatusChange(
-                        OrderStatus.pickup_ready,
+                        OrderStatus.preparing,
                         order.id
                       )}
                     />
