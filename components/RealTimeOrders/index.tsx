@@ -61,11 +61,13 @@ export default function RealTimeOrders({
   }, [supabase, orders, setOrders]);
 
   const handleStatusChange = useCallback(
-    (status: number, orderId: number) => async () =>
-      updateOrder({
-        status,
-        channelOrderId: orderId,
-      }),
+    (status: number, orderId: number, order_is_already_paid = true) =>
+      async () =>
+        updateOrder({
+          status,
+          order_is_already_paid,
+          channelOrderId: orderId,
+        }),
     []
   );
 
@@ -97,60 +99,79 @@ export default function RealTimeOrders({
                   <span className="font-black text-xl">
                     <span className="text-green-400">#</span>
                     <span className="text-black">{order.id}</span>
-                    {order.status === "pickup_ready" && (
-                      <span className="inline-flex items-center gap-1 py-0.5 px-2 ml-4 rounded-full text-sm font-bold bg-green-500 text-white">
-                        {order.status.charAt(0).toUpperCase() +
-                          order.status.slice(1)}
-                      </span>
-                    )}
-                    {order.status === "canceled" && (
+                    {!order.order_is_already_paid ? (
                       <span className="inline-flex items-center gap-1 py-0.5 px-2 ml-4 rounded-full text-sm font-bold bg-red-500 text-white">
-                        {order.status.charAt(0).toUpperCase() +
-                          order.status.slice(1)}
+                        {"Pending payment"}
                       </span>
-                    )}
-                    {(order.status === "preparing" ||
-                      order.status === "pending") && (
-                      <span className="inline-flex items-center gap-1 py-0.5 px-2 ml-4 rounded-full text-sm font-bold bg-yellow-500 text-white">
-                        {order.status.charAt(0).toUpperCase() +
-                          order.status.slice(1)}
-                      </span>
-                    )}
-                    {order.status === null && (
-                      <span className="inline-flex items-center gap-1 py-0.5 px-2 ml-4 rounded-full text-sm font-bold bg-yellow-500 text-white">
-                        {"pending"}
-                      </span>
+                    ) : (
+                      <>
+                        {order.status === "pickup_ready" && (
+                          <span className="inline-flex items-center gap-1 py-0.5 px-2 ml-4 rounded-full text-sm font-bold bg-green-500 text-white">
+                            {order.status.charAt(0).toUpperCase() +
+                              order.status.slice(1)}
+                          </span>
+                        )}
+                        {order.status === "canceled" && (
+                          <span className="inline-flex items-center gap-1 py-0.5 px-2 ml-4 rounded-full text-sm font-bold bg-red-500 text-white">
+                            {order.status.charAt(0).toUpperCase() +
+                              order.status.slice(1)}
+                          </span>
+                        )}
+                        {(order.status === "preparing" ||
+                          order.status === "pending") && (
+                          <span className="inline-flex items-center gap-1 py-0.5 px-2 ml-4 rounded-full text-sm font-bold bg-yellow-500 text-white">
+                            {order.status.charAt(0).toUpperCase() +
+                              order.status.slice(1)}
+                          </span>
+                        )}
+                        {order.status === null && (
+                          <span className="inline-flex items-center gap-1 py-0.5 px-2 ml-4 rounded-full text-sm font-bold bg-yellow-500 text-white">
+                            {"pending"}
+                          </span>
+                        )}
+                      </>
                     )}
                   </span>
-                  {(order.status === "pending" ||
-                    order.status === "preparing" ||
-                    order.status === null) && (
-                    <div className="space-x-2 mt-1 mb-1 flex flex-wrap">
-                      <OrderStates
-                        color="red"
-                        label="Cancel"
-                        onClick={handleStatusChange(
-                          OrderStatus.canceled,
-                          order.id
-                        )}
-                      />
-                      <OrderStates
-                        color="yellow"
-                        label="In preparation"
-                        onClick={handleStatusChange(
-                          OrderStatus.preparing,
-                          order.id
-                        )}
-                      />
-                      <OrderStates
-                        color="green"
-                        label="Ready to pick up"
-                        onClick={handleStatusChange(
-                          OrderStatus.pickup_ready,
-                          order.id
-                        )}
-                      />
-                    </div>
+                  {order.order_is_already_paid &&
+                    (order.status === "pending" ||
+                      order.status === "preparing" ||
+                      order.status === null) && (
+                      <div className="space-x-2 mt-1 mb-1 flex flex-wrap">
+                        <OrderStates
+                          color="red"
+                          label="Cancel"
+                          onClick={handleStatusChange(
+                            OrderStatus.canceled,
+                            order.id
+                          )}
+                        />
+                        <OrderStates
+                          color="yellow"
+                          label="In preparation"
+                          onClick={handleStatusChange(
+                            OrderStatus.preparing,
+                            order.id
+                          )}
+                        />
+                        <OrderStates
+                          color="green"
+                          label="Ready to pick up"
+                          onClick={handleStatusChange(
+                            OrderStatus.pickup_ready,
+                            order.id
+                          )}
+                        />
+                      </div>
+                    )}
+                  {!order.order_is_already_paid && (
+                    <OrderStates
+                      color="green"
+                      label="Paid"
+                      onClick={handleStatusChange(
+                        OrderStatus.preparing,
+                        order.id
+                      )}
+                    />
                   )}
                 </div>
 
@@ -168,6 +189,12 @@ export default function RealTimeOrders({
                       </th>
                       <th scope="col" className="px-4 py-2 text-left text-md">
                         Sub-items
+                      </th>
+                      <th scope="col" className="px-4 py-2 text-left text-md">
+                        Remarks
+                      </th>
+                      <th scope="col" className="px-4 py-2 text-left text-md">
+                        Take Away
                       </th>
                     </tr>
                   </thead>
@@ -200,6 +227,12 @@ export default function RealTimeOrders({
                                   </p>
                                 ))
                               : "N/A"}
+                          </td>
+                          <td className="px-4 py-5 text-md text-gray-800">
+                            {order.remark || "N/A"}
+                          </td>
+                          <td className="px-4 py-5 text-md text-gray-800">
+                            {order.take_away ? "Yes" : "No"}
                           </td>
                         </tr>
                       ))}
