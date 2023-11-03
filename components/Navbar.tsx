@@ -5,7 +5,10 @@ import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 
-const navigation = [{ name: "Orders", href: "/orders", current: true }];
+const navigation = [
+  { name: "Orders", href: "/orders", current: true },
+  { name: "Menu", href: "/menu", current: true },
+];
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
