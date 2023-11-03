@@ -1,5 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "abywcqquksfpaipjozbl.supabase.co",
+      },
+      {
+        protocol: "https",
+        hostname: "resizer.staging.deliverect.com",
+      },
+    ],
+  },
   webpack: (config) => {
     let modularizeImports = null;
     config.module.rules.some((rule) =>
