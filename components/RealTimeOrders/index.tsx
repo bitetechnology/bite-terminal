@@ -50,6 +50,9 @@ export default function RealTimeOrders({
               return [newOrder, ...prevOrders];
             }
           });
+
+          const chime = new Audio("audio/chime.mp3");
+          chime.play();
         }
       )
       .subscribe();
