@@ -10,9 +10,10 @@ type Props = {
     id: Database["public"]["Tables"]["dishes"]["Row"]["id"]
   ) => () => void;
   snoozed?: boolean;
+  snoozed_ingredients: Record<string, boolean>;
 };
 
-const MenuItem = ({ dish, handleSnooze, handleUnsnooze, snoozed }: Props) => {
+const MenuItem = ({ dish, handleSnooze, handleUnsnooze, snoozed, snoozed_ingredients }: Props) => {
   return (
     <div
       className={
@@ -32,7 +33,24 @@ const MenuItem = ({ dish, handleSnooze, handleUnsnooze, snoozed }: Props) => {
       />
       <div className={"flex-col"}>
         <div className="font-bold">{dish.name}</div>
-        <div>{dish.description}</div>
+        <div>
+        {dish.ingredients.map(
+          (ingredient) => {
+            return(
+              <li>{ingredient} {snoozed_ingredients[ingredient] ? (
+                <Image
+                src="/alarm-clock-icon.svg"
+                alt="Alarm Clock Icon"
+                className="mr-2 text-white stroke-current stroke-2"
+                width={20}
+                height={20}
+              />
+              ): ""}
+              </li>
+
+        )})}
+          
+        </div>
         <div>{`€ ${dish.price ? dish.price / 100 : 0}`}</div>
         {snoozed ? (
           <button
