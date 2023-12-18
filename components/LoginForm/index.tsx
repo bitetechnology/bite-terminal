@@ -19,7 +19,7 @@ export default function LoginForm() {
         password: password,
       });
       if (!error && data.user) {
-        push("/orders");
+        push("/dashboard");
       }
     } catch (e) {
       // eslint-disable-next-line no-console

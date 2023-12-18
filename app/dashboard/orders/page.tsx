@@ -1,4 +1,6 @@
+import DashboardHeading from "@/components/DashboardHeading";
 import RealTimeOrders from "@/components/RealTimeOrders";
+import NewRealTimeOrders from "@/components/RealTimeOrders/newIndex";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 
@@ -13,7 +15,15 @@ export default async function Order() {
       .select()
       .eq("restaurant_id", "84")
       .order("id", { ascending: false });
-    return data && data?.length > 0 && <RealTimeOrders serverOrders={data} />;
+    return (
+      data &&
+      data?.length > 0 && (
+        <>
+          <DashboardHeading title={`Orders`} />
+          <NewRealTimeOrders />
+        </>
+      )
+    );
   } catch (e) {
     // eslint-disable-next-line no-console
     console.log(e);

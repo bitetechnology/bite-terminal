@@ -1,6 +1,6 @@
 "use client";
 import { Database } from "@bitetechnology/bite-types";
-import Navbar from "../../components/Navbar";
+import Navbar from "../../../components/Navbar";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import MenuItem from "@/components/MenuItem";
 import { useCallback, useEffect, useState } from "react";
@@ -138,7 +138,6 @@ export default function Menu() {
           Snooze activated on the selected dish
         </div>
       )}
-      <Navbar />
       <div className={"flex-col flex my-5 col-span-2 mx-5"}>
         {categories &&
           categories.map((category) => {

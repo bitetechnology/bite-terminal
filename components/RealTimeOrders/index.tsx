@@ -77,7 +77,6 @@ export default function RealTimeOrders({
 
   return (
     <>
-      <Navbar />
       {orders && orders.length > 0 && showComponent ? (
         <div
           className="min-h-screen flex flex-col items-center p-10"
