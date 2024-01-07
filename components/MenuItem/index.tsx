@@ -4,6 +4,7 @@ import { useAsyncEffect } from "ahooks";
 import Image from "next/image";
 import React, { useCallback } from "react";
 import ModifierModal from "../ModifierModal";
+import { EDGE_FUNCTIONS } from "@/api/constants";
 type Props = {
   dish: Database["public"]["Tables"]["dishes"]["Row"];
   handleSnooze: (
@@ -21,9 +22,10 @@ const MenuItem = ({ dish, handleSnooze, handleUnsnooze, snoozed }: Props) => {
   //TODO: create error state
   const [modifierGroup, setModifierGroup] =
     React.useState<Database["public"]["Tables"]["modifier_groups"]["Row"][]>();
+
   useAsyncEffect(async () => {
     const { data, error } = await supabase.functions.invoke(
-      "deliverect-get-modifiers",
+      EDGE_FUNCTIONS.DELIVERECT_GET_MODIFIERS,
       {
         body: { dishId: dish.id },
       }

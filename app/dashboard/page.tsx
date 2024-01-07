@@ -10,7 +10,7 @@ export default function Dashboard() {
       <RevenueStats />
       <div className="mt-4" />
       <Last30DaysStats />
-      <NewRealTimeOrders />
+      {/* <NewRealTimeOrders /> */}
     </>
   );
 }
