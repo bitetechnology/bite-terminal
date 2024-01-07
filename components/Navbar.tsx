@@ -4,15 +4,12 @@ import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
+import { classNames } from "@/utils/classNames";
 
 const navigation = [
   { name: "Orders", href: "/orders", current: true },
   { name: "Menu", href: "/menu", current: true },
 ];
-
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
-}
 
 export default function Example() {
   const supabase = createClientComponentClient();

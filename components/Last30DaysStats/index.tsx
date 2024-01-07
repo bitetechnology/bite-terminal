@@ -1,3 +1,4 @@
+import { classNames } from "@/utils/classNames";
 import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
 import {
   CursorArrowRaysIcon,
@@ -31,10 +32,6 @@ const stats = [
     changeType: "decrease",
   },
 ];
-
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
-}
 
 export default function Last30DaysStats() {
   return (

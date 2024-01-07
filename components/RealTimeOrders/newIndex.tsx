@@ -1,13 +1,14 @@
 "use client";
 
 import { Fragment, useCallback, useEffect, useState } from "react";
-import { ArrowUpCircleIcon } from "@heroicons/react/20/solid";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@bitetechnology/bite-types";
 import OrderStates from "../OrderStates";
 import { OrderStatus } from "@/utils/orderStatus";
 import { updateOrder } from "@/utils/updateStatus";
 import TableRow from "../table/row";
+import { useGroupedOrders } from "@/hooks/useGroupedOrders";
+import { classNames } from "@/utils/classNames";
 
 type OrderFromSupabase = Database["public"]["Tables"]["orders"]["Row"];
 
@@ -21,40 +22,15 @@ const statuses = {
   overdue: "text-red-700 bg-red-50 ring-red-600/10",
 };
 
-function getFriendlyDateString(dateStr: string): string {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-
-  const dateObj = new Date(dateStr);
-  dateObj.setHours(0, 0, 0, 0); // Normalize the time part to ensure correct comparison
-
-  if (dateObj.getTime() === today.getTime()) {
-    return "Today";
-  } else if (dateObj.getTime() === yesterday.getTime()) {
-    return "Yesterday";
-  } else {
-    return dateObj.toISOString().split("T")[0];
-  }
-}
-
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
-}
-
 export default function NewRealTimeOrders({
   serverOrders,
 }: {
   serverOrders: any; //TODO: check if this is really any
 }) {
-  const [orders, setOrders] = useState<OrderFromSupabase[] | []>([]);
+  const [orders, setOrders] = useState<OrderFromSupabase[] | []>(serverOrders);
   const supabaseClient = createClientComponentClient();
 
-  useEffect(() => {
-    setOrders(serverOrders);
-  }, [serverOrders]);
-
+  //TODO: this is a call to the database realtime need to be generalized and separated from the view component
   useEffect(() => {
     const channel = supabaseClient
       .channel("*")
@@ -91,35 +67,7 @@ export default function NewRealTimeOrders({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [supabaseClient, orders, setOrders]);
 
-  const groupedOrders = {};
-
-  orders.forEach((order) => {
-    // Extract the date in a readable format (e.g., '2023-03-22')
-    const date = new Date(
-      order.insertion_date ?? "2023-11-25T15:49:49.417+00:00"
-    )
-      .toISOString()
-      .split("T")[0];
-
-    // Create an entry for each date if it doesn't exist
-    if (!groupedOrders[date]) {
-      groupedOrders[date] = [];
-    }
-
-    // Add the order to the correct date
-    groupedOrders[date].push(order);
-  });
-
-  // Convert the groupedOrders object to an array and sort by date
-  const days = Object.keys(groupedOrders)
-    .map((date) => {
-      return {
-        date: getFriendlyDateString(date),
-        dateTime: date,
-        transactions: groupedOrders[date],
-      };
-    })
-    .sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime)); // Sort by date in descending order
+  const days = useGroupedOrders(orders);
 
   const handleStatusChange = useCallback(
     (status: number, orderId: number, order_is_already_paid = true) =>
@@ -217,6 +165,11 @@ export default function NewRealTimeOrders({
                       </TableRow>
                       <TableRow>
                         <div className="text-sm font-medium leading-6 text-gray-900">
+                          Order Paid?
+                        </div>
+                      </TableRow>
+                      <TableRow>
+                        <div className="text-sm font-medium leading-6 text-gray-900">
                           Take Away
                         </div>
                       </TableRow>
@@ -302,6 +255,19 @@ export default function NewRealTimeOrders({
                             <TableRow>
                               <div
                                 className={`text-sm text-gray-900 rounded-xl py-1 px-2 font-medium ring-1 ring-inset w-10 ${
+                                  transaction.order_is_already_paid
+                                    ? "text-green-700 bg-green-50 ring-green-600/20"
+                                    : "text-red-700 bg-red-50 ring-red-600/10"
+                                }`}
+                              >
+                                {transaction.order_is_already_paid
+                                  ? "Yes"
+                                  : "No"}
+                              </div>
+                            </TableRow>
+                            <TableRow>
+                              <div
+                                className={`text-sm text-gray-900 rounded-xl py-1 px-2 font-medium ring-1 ring-inset w-10 ${
                                   transaction.take_away
                                     ? "text-green-700 bg-green-50 ring-green-600/20"
                                     : "text-red-700 bg-red-50 ring-red-600/10"
@@ -315,36 +281,37 @@ export default function NewRealTimeOrders({
                                 <div className="flex-auto">
                                   <div className="flex items-start gap-x-3">
                                     {transaction.order_is_already_paid &&
-                                    (transaction.status === "pending" ||
-                                      transaction.status === "preparing" ||
-                                      transaction.status === null) ? (
-                                      <>
-                                        <OrderStates
-                                          color="red"
-                                          label="Cancel"
-                                          onClick={handleStatusChange(
-                                            OrderStatus.canceled,
-                                            transaction.id
-                                          )}
-                                        />
-                                        <OrderStates
-                                          color="yellow"
-                                          label="In preparation"
-                                          onClick={handleStatusChange(
-                                            OrderStatus.preparing,
-                                            transaction.id
-                                          )}
-                                        />
-                                        <OrderStates
-                                          color="green"
-                                          label="Ready to pick up"
-                                          onClick={handleStatusChange(
-                                            OrderStatus.pickup_ready,
-                                            transaction.id
-                                          )}
-                                        />
-                                      </>
-                                    ) : (
+                                      (transaction.status === "pending" ||
+                                        transaction.status === "preparing" ||
+                                        transaction.status === null) && (
+                                        <>
+                                          <OrderStates
+                                            color="red"
+                                            label="Cancel"
+                                            onClick={handleStatusChange(
+                                              OrderStatus.canceled,
+                                              transaction.id
+                                            )}
+                                          />
+                                          <OrderStates
+                                            color="yellow"
+                                            label="preparing"
+                                            onClick={handleStatusChange(
+                                              OrderStatus.preparing,
+                                              transaction.id
+                                            )}
+                                          />
+                                          <OrderStates
+                                            color="green"
+                                            label="Ready"
+                                            onClick={handleStatusChange(
+                                              OrderStatus.pickup_ready,
+                                              transaction.id
+                                            )}
+                                          />
+                                        </>
+                                      )}
+                                    {!transaction.order_is_already_paid && (
                                       <OrderStates
                                         color="green"
                                         label="Paid"
