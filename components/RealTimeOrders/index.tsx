@@ -6,7 +6,6 @@ import OrderStates from "../OrderStates";
 import { Database } from "@bitetechnology/bite-types";
 import { OrderStatus } from "@/utils/orderStatus";
 import { updateOrder } from "@/utils/updateStatus";
-import Navbar from "../Navbar";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 type OrderFromSupabase = Database["public"]["Tables"]["orders"]["Row"];
@@ -80,7 +79,6 @@ export default function RealTimeOrders({
 
   return (
     <>
-      <Navbar />
       {orders && orders.length > 0 && showComponent ? (
         <div
           className="min-h-screen flex flex-col items-center p-10"

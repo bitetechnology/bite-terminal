@@ -1,9 +1,10 @@
 "use client";
 import { Database } from "@bitetechnology/bite-types";
-import Navbar from "../../components/Navbar";
+import Navbar from "../../../components/Navbar";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import MenuItem from "@/components/MenuItem";
 import { useCallback, useEffect, useState } from "react";
+import { COLLECTIONS } from "@/api/constants";
 
 const restaurantId = "84";
 
@@ -28,7 +29,7 @@ export default function Menu() {
   const handleSnooze = useCallback(
     (dishId: string) => async () => {
       const { error: errorSnooze } = await supabase
-        .from("snoozed_restaurants_dishes")
+        .from(COLLECTIONS.SNOOZED_RESTAURANTS_DISHES)
         .upsert({
           restaurant_id: Number(restaurantId),
           dish_id: dishId,
@@ -47,7 +48,7 @@ export default function Menu() {
   const handleUnsnooze = useCallback(
     (dishId: string) => async () => {
       const { error: errorUnsnooze } = await supabase
-        .from("snoozed_restaurants_dishes")
+        .from(COLLECTIONS.SNOOZED_RESTAURANTS_DISHES)
         .delete()
         .match({
           restaurant_id: restaurantId,
@@ -68,7 +69,7 @@ export default function Menu() {
     const fetchData = async () => {
       try {
         const { data, error } = await supabase
-          .from("categories")
+          .from(COLLECTIONS.CATEGORIES)
           .select(
             `
             *,
@@ -103,7 +104,7 @@ export default function Menu() {
     const fetchSnoozedUnsnoozeSnoozeData = async () => {
       try {
         const { data, error } = await supabase
-          .from("snoozed_restaurants_dishes")
+          .from(COLLECTIONS.SNOOZED_RESTAURANTS_DISHES)
           .select("*")
           .eq("restaurant_id", restaurantId);
 
@@ -138,7 +139,6 @@ export default function Menu() {
           Snooze activated on the selected dish
         </div>
       )}
-      <Navbar />
       <div className={"flex-col flex my-5 col-span-2 mx-5"}>
         {categories &&
           categories.map((category) => {

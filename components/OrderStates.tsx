@@ -35,7 +35,7 @@ const OrderStates: React.FC<Props> = ({ color, label, onClick }) => {
     <button
       type="button"
       onClick={onClick}
-      className={`py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold ${colorClasses[color].background} ${colorClasses[color].text} ${colorClasses[color].hoverBackground} ${colorClasses[color].hoverText} ${colorClasses[color].focusRing} focus:outline-none focus:ring-2 ring-offset-white focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800`}
+      className={`py-3 px-4 inline-flex justify-center items-center rounded-md border border-transparent font-semibold ${colorClasses[color].background} ${colorClasses[color].text} ${colorClasses[color].hoverBackground} ${colorClasses[color].hoverText} ${colorClasses[color].focusRing} focus:outline-none focus:ring-2 ring-offset-white focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800`}
     >
       {label}
     </button>

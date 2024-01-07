@@ -27,9 +27,6 @@ body {
     box-shadow: 15px 15px 30px rgba(211, 209, 216, 0.25);
 }
 
-tbody tr:nth-child(even) {
-  background-color: #f3f4f6; /* Light gray */
-}
 
 .skeleton {
     background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
