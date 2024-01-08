@@ -5,6 +5,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import MenuItem from "@/components/MenuItem";
 import { useCallback, useEffect, useState } from "react";
 import { COLLECTIONS } from "@/api/constants";
+import Alert from "@/components/Alert";
 
 const restaurantId = "84";
 
@@ -134,29 +135,29 @@ export default function Menu() {
 
   return (
     <div>
-      {showAlert && (
-        <div className="bg-yellow-500 text-black fixed transition-all duration-500 ease-in-out w-full text-center z-10">
-          Snooze activated on the selected dish
-        </div>
-      )}
+      {showAlert && <Alert text={"You have successfully snoozed the dish"} />}
       <div className={"flex-col flex my-5 col-span-2 mx-5"}>
         {categories &&
           categories.map((category) => {
             return (
-              <div key={category.id}>
-                <div className={"text-lg font-black"}>{category.name}</div>
-                <div className={"grid grid-cols-2 gap-4"}>
-                  {category.data.map((dish) => {
-                    return (
-                      <MenuItem
-                        key={dish.id}
-                        dish={dish}
-                        handleSnooze={handleSnooze}
-                        handleUnsnooze={handleUnsnooze}
-                        snoozed={!!snoozedUnsnoozedMap?.[dish.id]}
-                      />
-                    );
-                  })}
+              <div className="bg-white" key={category.id}>
+                <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+                  <h2 className="text-xl font-bold text-gray-900">
+                    {category.name}
+                  </h2>
+                  <div className="mt-8 grid grid-cols-1 gap-y-12 sm:grid-cols-2 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8">
+                    {category.data.map((dish) => {
+                      return (
+                        <MenuItem
+                          key={dish.id}
+                          dish={dish}
+                          handleSnooze={handleSnooze}
+                          handleUnsnooze={handleUnsnooze}
+                          snoozed={!!snoozedUnsnoozedMap?.[dish.id]}
+                        />
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             );
