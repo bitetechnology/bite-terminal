@@ -1,14 +1,14 @@
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
-interface SidebarProps {
+interface SlideOverProps {
   open: boolean;
   onClose: () => void;
   children: React.ReactNode;
 }
 
-export default function Sidebar({ open, onClose, children }: SidebarProps) {
+export default function SlideOver({ open, onClose, children }: SlideOverProps) {
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog

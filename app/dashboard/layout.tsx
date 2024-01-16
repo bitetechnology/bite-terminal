@@ -2,6 +2,7 @@ import SideBarLayout from "@/components/SideBarLayout";
 import "../globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import SWRProvider from "@/providers/SWRProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,7 +19,9 @@ export default function DashboardLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <SideBarLayout>{children}</SideBarLayout>
+        <SWRProvider>
+          <SideBarLayout>{children}</SideBarLayout>
+        </SWRProvider>
       </body>
     </html>
   );
