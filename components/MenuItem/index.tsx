@@ -34,9 +34,7 @@ const MenuItem = ({ dish, handleSnooze, handleUnsnooze, snoozed }: Props) => {
     error: modifierGroupError,
     isLoading: modifierGroupIsLoading,
     isValidating: modifierGroupIsValidating,
-  } = useSWR<Database["public"]["Tables"]["modifier_groups"]["Row"][]>(
-    `/api/modifiers/${dish.id}`
-  );
+  } = useSWR(`/api/modifiers/${dish.id}`);
 
   const { mutate } = useSWRConfig();
 
