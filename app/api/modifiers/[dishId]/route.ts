@@ -1,5 +1,5 @@
-import { EDGE_FUNCTIONS } from "@/api/constants";
-import supabase from "@/api/supabaseClient";
+import { EDGE_FUNCTIONS } from "@/lib/constants";
+import supabase from "@/lib/supabaseClient";
 import { Database } from "@bitetechnology/bite-types";
 
 export async function GET(

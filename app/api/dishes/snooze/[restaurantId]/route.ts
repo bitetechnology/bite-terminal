@@ -1,5 +1,5 @@
-import { COLLECTIONS } from "@/api/constants";
-import supabase from "@/api/supabaseClient";
+import { COLLECTIONS } from "@/lib/constants";
+import supabase from "@/lib/supabaseClient";
 import { SnoozedDishesMap } from "@/types/snoozedItems";
 
 export async function GET(

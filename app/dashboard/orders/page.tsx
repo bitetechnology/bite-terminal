@@ -1,4 +1,4 @@
-import { COLLECTIONS } from "@/api/constants";
+import { COLLECTIONS } from "@/lib/constants";
 import DashboardHeading from "@/components/DashboardHeading";
 import NewRealTimeOrders from "@/components/RealTimeOrders/newIndex";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
