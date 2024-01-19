@@ -6,14 +6,15 @@ export async function POST(request: Request) {
 
   const { data, error } = await supabase
     .from(COLLECTIONS.SNOOZED_RESTAURANTS_DISHES)
-    .delete()
-    .match({
+    .upsert({
       restaurant_id: body.restaurantId,
       dish_id: body.dishId,
+      snooze_start: body.snoozeStart,
+      snooze_end: body.snoozeEnd,
     });
   if (error) {
     return new Response(
-      `There was an error on retrieveing the snoozed dishes ${error}`
+      `There was an error on retrieving the snoozed dishes ${error}`
     );
   }
   return Response.json(data);

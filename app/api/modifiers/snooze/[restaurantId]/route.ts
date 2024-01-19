@@ -1,30 +1,35 @@
 import { COLLECTIONS } from "@/api/constants";
 import supabase from "@/api/supabaseClient";
-import { SnoozedDishesMap } from "@/types/snoozedItems";
+
+type SnoozedDishesMap = {
+  [key: string]:
+    | {
+        snoozeStart: string | null;
+        snoozeEnd: string | null;
+      }
+    | {};
+};
 
 export async function GET(
-  request: Request,
+  _: Request,
   { params }: { params: { restaurantId: string } }
 ) {
   const { restaurantId } = params;
   const { data, error } = await supabase
-    .from(COLLECTIONS.SNOOZED_RESTAURANTS_DISHES)
+    .from(COLLECTIONS.SNOOZED_RESTAURANTS_MODIFIERS)
     .select("*")
     .eq("restaurant_id", restaurantId);
 
   if (error) {
-    return new Response(
-      `error fetching the categories for the given restaurant: ${error}`,
-      {
-        status: 404,
-      }
-    );
+    return new Response(`there was a problem with the request ${error}`, {
+      status: 404,
+    });
   }
 
   if (data) {
     const snoozedDishesMap: SnoozedDishesMap = data.reduce<SnoozedDishesMap>(
       (acc, curr) => {
-        acc[curr.dish_id] = {
+        acc[curr.modifier_id] = {
           snoozeStart: curr.snooze_start,
           snoozeEnd: curr.snooze_end,
         };
@@ -35,7 +40,7 @@ export async function GET(
     return Response.json(snoozedDishesMap);
   }
 
-  return new Response(`there was a problem in making your request ${data}`, {
+  return new Response(`there was a problem in making your request`, {
     status: 500,
   });
 }

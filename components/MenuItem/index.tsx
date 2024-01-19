@@ -1,9 +1,8 @@
 import { Database } from "@bitetechnology/bite-types";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import React, { useCallback, useEffect, useState } from "react";
-import { COLLECTIONS, EDGE_FUNCTIONS } from "@/api/constants";
+import React, { useCallback, useState } from "react";
 import SlideOver from "../SlideOver";
 import MenuDetail from "../MenuDetail";
+import useSWR, { useSWRConfig } from "swr";
 
 const restaurantId = "84";
 
@@ -29,97 +28,68 @@ type SnoozedDishesMap = {
 
 const MenuItem = ({ dish, handleSnooze, handleUnsnooze, snoozed }: Props) => {
   const [showSlideOver, setSlideOver] = useState(false);
-  const [modifierGroup, setModifierGroup] =
-    useState<Database["public"]["Tables"]["modifier_groups"]["Row"][]>();
-  const [snoozedUnsnoozedMap, setSnoozedUnsnoozedMap] =
-    useState<SnoozedDishesMap>();
-  const supabase = createClientComponentClient<Database>();
+
+  const {
+    data: modifierGroup,
+    error: modifierGroupError,
+    isLoading: modifierGroupIsLoading,
+    isValidating: modifierGroupIsValidating,
+  } = useSWR<Database["public"]["Tables"]["modifier_groups"]["Row"][]>(
+    `/api/modifiers/${dish.id}`
+  );
+
+  const { mutate } = useSWRConfig();
+
+  const {
+    data: snoozedUnsnoozedMap,
+    error: snoozedUnsnoozedMapError,
+    isLoading: snoozedUnsnoozedMapIsLoading,
+    isValidating: snoozedUnsnoozedMapIsValidating,
+  } = useSWR<SnoozedDishesMap>(`/api/modifiers/snooze/${restaurantId}`);
+
+  const fetchSnoozeModifier = async (
+    modifierId: number,
+    restaurantId: string
+  ) => {
+    const res = await fetch("/api/modifiers/snooze", {
+      method: "POST",
+      body: JSON.stringify({ modifierId, restaurantId }),
+    });
+    const data = await res.json();
+    return data;
+  };
+
+  const fetchUnsnoozeModifier = async (
+    modifierId: number,
+    restaurantId: string
+  ) => {
+    const res = await fetch(`/api/modifiers/unsnooze`, {
+      method: "POST",
+      body: JSON.stringify({ modifierId, restaurantId }),
+    });
+    const data = await res.json();
+    return data;
+  };
 
   const handleModifiersSnooze = useCallback(
     (modifierId: number) => async () => {
-      const { error: errorSnooze } = await supabase
-        .from(COLLECTIONS.SNOOZED_RESTAURANTS_MODIFIERS)
-        .upsert({
-          restaurant_id: Number(restaurantId),
-          modifier_id: modifierId,
-          snooze_start: new Date().toISOString(),
-          snooze_end: new Date().toISOString(),
-        });
-      if (errorSnooze) {
-        return;
-      }
+      mutate(
+        `/api/modifiers/snooze/${restaurantId}`,
+        fetchSnoozeModifier(modifierId, restaurantId)
+      );
     },
-    [supabase]
+    [mutate]
   );
 
   const handleModifiersUnsnooze = useCallback(
     (modifierId: number) => async () => {
-      const { error: errorUnsnooze } = await supabase
-        .from(COLLECTIONS.SNOOZED_RESTAURANTS_MODIFIERS)
-        .delete()
-        .match({
-          restaurant_id: restaurantId,
-          modifier_id: modifierId,
-        });
-      if (errorUnsnooze) {
-        return;
-      }
-    },
-    [supabase]
-  );
-
-  useEffect(() => {
-    const fetchModifiers = async () => {
-      const { data, error } = await supabase.functions.invoke(
-        EDGE_FUNCTIONS.DELIVERECT_GET_MODIFIERS,
-        {
-          body: { dishId: dish.id },
-        }
+      mutate(
+        `/api/modifiers/snooze/${restaurantId}`,
+        fetchUnsnoozeModifier(modifierId, restaurantId)
       );
-      if (error) {
-        return;
-      }
-      const parsedData = JSON.parse(
-        data
-      ) as Database["public"]["Tables"]["modifier_groups"]["Row"][];
-      if (parsedData.length > 0) {
-        setModifierGroup(parsedData);
-      }
-    };
-    fetchModifiers();
-  }, [dish, modifierGroup, supabase]);
-
-  useEffect(() => {
-    const fetchSnoozedUnsnoozeSnoozeData = async () => {
-      try {
-        const { data, error } = await supabase
-          .from(COLLECTIONS.SNOOZED_RESTAURANTS_MODIFIERS)
-          .select("*")
-          .eq("restaurant_id", restaurantId);
-
-        if (data && data?.length > 0) {
-          const snoozedDishesMap: SnoozedDishesMap =
-            data.reduce<SnoozedDishesMap>((acc, curr) => {
-              acc[curr.modifier_id] = {
-                snoozeStart: curr.snooze_start,
-                snoozeEnd: curr.snooze_end,
-              };
-              return acc;
-            }, {});
-
-          setSnoozedUnsnoozedMap(snoozedDishesMap);
-        }
-        if (error) {
-          throw error;
-        }
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error(e);
-      }
-    };
-
-    fetchSnoozedUnsnoozeSnoozeData();
-  }, [supabase]);
+    },
+    [mutate]
+  );
 
   const openModal = useCallback(() => {
     setSlideOver(true);
@@ -176,7 +146,17 @@ const MenuItem = ({ dish, handleSnooze, handleUnsnooze, snoozed }: Props) => {
           )}
         </div>
       </div>
-      <SlideOver open={showSlideOver} onClose={onCloseSlideOver}>
+      <SlideOver
+        open={showSlideOver}
+        onClose={onCloseSlideOver}
+        isLoading={
+          modifierGroupIsLoading ||
+          snoozedUnsnoozedMapIsLoading ||
+          modifierGroupIsValidating ||
+          snoozedUnsnoozedMapIsValidating ||
+          snoozedUnsnoozedMapIsValidating
+        }
+      >
         <MenuDetail
           onClose={onCloseSlideOver}
           dish={dish}
