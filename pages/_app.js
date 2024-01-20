@@ -1,5 +1,5 @@
-import Script from 'next/script'
-import '../app/globals.css'
+import Script from "next/script";
+import "../app/globals.css";
 
 function MyApp({ Component, pageProps }) {
   return (
@@ -7,7 +7,7 @@ function MyApp({ Component, pageProps }) {
       <Script src="./node_modules/preline/dist/preline.js" />
       <Component {...pageProps} />
     </>
-  )
+  );
 }
 
-export default MyApp
+export default MyApp;
