@@ -12,20 +12,24 @@ type CategoryResponse = Database["public"]["Tables"]["categories"]["Row"] & {
 };
 
 export default function Menu() {
-  const [showAlert, setShowAlert] = useState(false);
+  const [showLoading, setShowLoading] = useState(false);
 
   const {
     data: categories,
     error: categoriesError,
     isLoading: categoriesApiIsLoading,
     isValidating: categoriesApiIsValidating,
-  } = useSWR<CategoryResponse[]>(`/api/categories/${restaurantId}`);
+  } = useSWR<CategoryResponse[]>(`/api/categories/${restaurantId}`, {
+    revalidateOnFocus: false,
+  });
   const {
     data: snoozedDishesMap,
     error: snoozedDishesMapError,
     isLoading: snoozeMapIsLoading,
     isValidating: snoozeMapIsValidating,
-  } = useSWR(`/api/dishes/snooze/${restaurantId}`);
+  } = useSWR(`/api/dishes/snooze/${restaurantId}`, {
+    revalidateOnFocus: false,
+  });
 
   const { mutate } = useSWRConfig();
 
@@ -59,8 +63,10 @@ export default function Menu() {
         `/api/dishes/snooze/${restaurantId}`,
         fetchSnoozeDishMethod(dishId, restaurantId)
       );
-      setShowAlert(true);
-      setTimeout(() => setShowAlert(false), 3000);
+      setShowLoading(true);
+      setTimeout(() => {
+        setShowLoading(false);
+      }, 3000);
     },
     [mutate]
   );
@@ -71,19 +77,22 @@ export default function Menu() {
         `/api/dishes/snooze/${restaurantId}`,
         fetchUnsnoozeDishMethod(dishId, restaurantId)
       );
-      setShowAlert(true);
-      setTimeout(() => setShowAlert(false), 3000);
+      setShowLoading(true);
+      setTimeout(() => {
+        setShowLoading(false);
+      }, 3000);
     },
     [mutate]
   );
 
   return (
     <>
-      {(snoozeMapIsValidating ||
+      {(showLoading ||
+        snoozeMapIsValidating ||
         categoriesApiIsValidating ||
         categoriesApiIsLoading ||
         snoozeMapIsLoading) && (
-        <div className="fixed inset-0 z-10 bg-black top-0 right-0 bottom-0 left-0 bg-opacity-40 flex items-center justify-center">
+        <div className="fixed backdrop-blur-md inset-0 z-10 bg-black top-0 right-0 bottom-0 left-0 bg-opacity-40 flex items-center justify-center">
           <div role="status">
             <svg
               aria-hidden="true"
@@ -106,7 +115,7 @@ export default function Menu() {
         </div>
       )}
       <div className="absolute bg-blend-overlay bg-black-2">
-        {showAlert && (
+        {showLoading && (
           <div className="absolute top-0 right-0 left-0">
             <Alert text={"You have successfully snoozed the dish"} />
           </div>

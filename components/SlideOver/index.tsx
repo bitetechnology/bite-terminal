@@ -51,9 +51,9 @@ export default function SlideOver({
               >
                 <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
                   <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
-                    <div className="relative mt-12 flex-1 px-4 sm:px-6 py-12">
+                    <div className="relative flex-1 px-4 sm:px-6 py-12">
                       {isLoading && (
-                        <div className="absolute inset-0 z-10 bg-black top-0 right-0 bottom-0 left-0 bg-opacity-40 flex items-center justify-center">
+                        <div className="absolute backdrop-blur-md inset-0 z-10 bg-black top-0 right-0 bottom-0 left-0 bg-opacity-40 flex items-center justify-center">
                           <div role="status">
                             <svg
                               aria-hidden="true"

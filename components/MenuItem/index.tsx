@@ -28,13 +28,16 @@ type SnoozedDishesMap = {
 
 const MenuItem = ({ dish, handleSnooze, handleUnsnooze, snoozed }: Props) => {
   const [showSlideOver, setSlideOver] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const {
     data: modifierGroup,
     error: modifierGroupError,
     isLoading: modifierGroupIsLoading,
     isValidating: modifierGroupIsValidating,
-  } = useSWR(`/api/modifiers/${dish.id}`);
+  } = useSWR(`/api/modifiers/${dish.id}`, {
+    revalidateOnFocus: false,
+  });
 
   const { mutate } = useSWRConfig();
 
@@ -43,7 +46,9 @@ const MenuItem = ({ dish, handleSnooze, handleUnsnooze, snoozed }: Props) => {
     error: snoozedUnsnoozedMapError,
     isLoading: snoozedUnsnoozedMapIsLoading,
     isValidating: snoozedUnsnoozedMapIsValidating,
-  } = useSWR<SnoozedDishesMap>(`/api/modifiers/snooze/${restaurantId}`);
+  } = useSWR<SnoozedDishesMap>(`/api/modifiers/snooze/${restaurantId}`, {
+    revalidateOnFocus: false,
+  });
 
   const fetchSnoozeModifier = async (
     modifierId: number,
@@ -53,8 +58,10 @@ const MenuItem = ({ dish, handleSnooze, handleUnsnooze, snoozed }: Props) => {
       method: "POST",
       body: JSON.stringify({ modifierId, restaurantId }),
     });
-    const data = await res.json();
-    return data;
+    try {
+      const data = await res.json();
+      return data;
+    } catch (e) {}
   };
 
   const fetchUnsnoozeModifier = async (
@@ -65,8 +72,10 @@ const MenuItem = ({ dish, handleSnooze, handleUnsnooze, snoozed }: Props) => {
       method: "POST",
       body: JSON.stringify({ modifierId, restaurantId }),
     });
-    const data = await res.json();
-    return data;
+    try {
+      const data = await res.json();
+      return data;
+    } catch (e) {}
   };
 
   const handleModifiersSnooze = useCallback(
@@ -75,6 +84,10 @@ const MenuItem = ({ dish, handleSnooze, handleUnsnooze, snoozed }: Props) => {
         `/api/modifiers/snooze/${restaurantId}`,
         fetchSnoozeModifier(modifierId, restaurantId)
       );
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+      }, 4000);
     },
     [mutate]
   );
@@ -85,6 +98,10 @@ const MenuItem = ({ dish, handleSnooze, handleUnsnooze, snoozed }: Props) => {
         `/api/modifiers/snooze/${restaurantId}`,
         fetchUnsnoozeModifier(modifierId, restaurantId)
       );
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+      }, 4000);
     },
     [mutate]
   );
@@ -148,6 +165,7 @@ const MenuItem = ({ dish, handleSnooze, handleUnsnooze, snoozed }: Props) => {
         open={showSlideOver}
         onClose={onCloseSlideOver}
         isLoading={
+          loading ||
           modifierGroupIsLoading ||
           snoozedUnsnoozedMapIsLoading ||
           modifierGroupIsValidating ||
