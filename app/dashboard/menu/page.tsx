@@ -83,7 +83,7 @@ export default function Menu() {
         categoriesApiIsValidating ||
         categoriesApiIsLoading ||
         snoozeMapIsLoading) && (
-        <div className="absolute inset-0 z-10 bg-black top-0 right-0 bottom-0 left-0 bg-opacity-40 flex items-center justify-center">
+        <div className="fixed inset-0 z-10 bg-black top-0 right-0 bottom-0 left-0 bg-opacity-40 flex items-center justify-center">
           <div role="status">
             <svg
               aria-hidden="true"
