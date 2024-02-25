@@ -30,20 +30,10 @@ const MenuItem = ({ dish, handleSnooze, handleUnsnooze, snoozed }: Props) => {
   const [showSlideOver, setSlideOver] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const {
-    data: modifierGroup,
-    error: modifierGroupError,
-    isLoading: modifierGroupIsLoading,
-    isValidating: modifierGroupIsValidating,
-  } = useSWR(`/api/modifiers/${dish.id}`, {
-    revalidateOnFocus: false,
-  });
-
   const { mutate } = useSWRConfig();
 
   const {
     data: snoozedUnsnoozedMap,
-    error: snoozedUnsnoozedMapError,
     isLoading: snoozedUnsnoozedMapIsLoading,
     isValidating: snoozedUnsnoozedMapIsValidating,
   } = useSWR<SnoozedDishesMap>(`/api/modifiers/snooze/${restaurantId}`, {
@@ -166,9 +156,7 @@ const MenuItem = ({ dish, handleSnooze, handleUnsnooze, snoozed }: Props) => {
         onClose={onCloseSlideOver}
         isLoading={
           loading ||
-          modifierGroupIsLoading ||
           snoozedUnsnoozedMapIsLoading ||
-          modifierGroupIsValidating ||
           snoozedUnsnoozedMapIsValidating ||
           snoozedUnsnoozedMapIsValidating
         }
@@ -176,7 +164,6 @@ const MenuItem = ({ dish, handleSnooze, handleUnsnooze, snoozed }: Props) => {
         <MenuDetail
           onClose={onCloseSlideOver}
           dish={dish}
-          modifierGroups={modifierGroup}
           handleSnooze={handleModifiersSnooze}
           handleUnsnooze={handleModifiersUnsnooze}
           snoozedModifierMap={snoozedUnsnoozedMap}

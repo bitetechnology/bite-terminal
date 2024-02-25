@@ -6,6 +6,15 @@ interface CreateMenuFormProps {
 }
 
 const CreateMenuForm = ({ onClose }: CreateMenuFormProps) => {
+  const handleSubmit = (values: {
+    name: string;
+    description: string;
+    price: number;
+    imageUrl: string;
+  }) => {
+    console.log("values: ", values);
+  };
+
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -13,9 +22,7 @@ const CreateMenuForm = ({ onClose }: CreateMenuFormProps) => {
       price: 0,
       imageUrl: "",
     },
-    onSubmit: (values) => {
-      //TODO: create a database record with the information
-    },
+    onSubmit: handleSubmit,
   });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -165,6 +172,7 @@ const CreateMenuForm = ({ onClose }: CreateMenuFormProps) => {
           <button
             type="submit"
             className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            onClick={() => formik.handleSubmit()}
           >
             Save
           </button>

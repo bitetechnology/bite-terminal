@@ -1,6 +1,7 @@
 import { Database } from "@bitetechnology/bite-types";
 import { PhotoIcon } from "@heroicons/react/20/solid";
 import { useFormik } from "formik";
+import useSWR from "swr";
 
 type SnoozedDishesMap = {
   [key: string]:
@@ -18,7 +19,6 @@ type ModifierGroupMap = {
 
 interface MenuDetailProps {
   dish: Database["public"]["Tables"]["dishes"]["Row"];
-  modifierGroups?: ModifierGroupMap[];
   handleSnooze: (modifierId: number) => () => void;
   handleUnsnooze: (modifierId: number) => () => void;
   snoozedModifierMap?: SnoozedDishesMap;
@@ -27,12 +27,19 @@ interface MenuDetailProps {
 
 const MenuDetail = ({
   dish,
-  modifierGroups,
   handleSnooze,
   handleUnsnooze,
   snoozedModifierMap,
   onClose,
 }: MenuDetailProps) => {
+  const {
+    data: modifierGroups,
+    isLoading: modifierGroupIsLoading,
+    isValidating: modifierGroupIsValidating,
+  } = useSWR(`/api/modifiers/${dish.id}`, {
+    revalidateOnFocus: false,
+  });
+
   const formik = useFormik({
     initialValues: {
       name: dish.name ?? "",
@@ -179,11 +186,12 @@ const MenuDetail = ({
               </p>
               <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 {modifierGroups.map(
-                  (modifierGroup) => modifierGroup.modifierGroupName
+                  (modifierGroup: ModifierGroupMap) =>
+                    modifierGroup.modifierGroupName
                 )}
               </div>
 
-              {modifierGroups.map((modifierGroup) => {
+              {modifierGroups.map((modifierGroup: ModifierGroupMap) => {
                 return modifierGroup.modifiers?.map((modifier) => {
                   return (
                     <div
