@@ -4,15 +4,25 @@ import { useCallback, useState } from "react";
 import Alert from "@/components/Alert";
 import useSWR, { useSWRConfig } from "swr";
 import { Database } from "@bitetechnology/bite-types";
-
-const restaurantId = "84";
+import SlideOver from "@/components/SlideOver";
+import CreateMenuForm from "@/components/CreateMenuForm";
 
 type CategoryResponse = Database["public"]["Tables"]["categories"]["Row"] & {
   data: Database["public"]["Tables"]["dishes"]["Row"][];
 };
 
-export default function Menu() {
+export default function Menu({ params }: { params: { restaurantId: string } }) {
+  const { restaurantId } = params;
   const [showLoading, setShowLoading] = useState(false);
+  const [showSlideOver, setSlideOver] = useState(false);
+
+  const openModal = useCallback(() => {
+    setSlideOver(true);
+  }, []);
+
+  const onCloseSlideOver = useCallback(() => {
+    setSlideOver(false);
+  }, []);
 
   const {
     data: categories,
@@ -68,7 +78,7 @@ export default function Menu() {
         setShowLoading(false);
       }, 3000);
     },
-    [mutate]
+    [mutate, restaurantId]
   );
 
   const handleUnsnooze = useCallback(
@@ -82,7 +92,7 @@ export default function Menu() {
         setShowLoading(false);
       }, 3000);
     },
-    [mutate]
+    [mutate, restaurantId]
   );
 
   return (
@@ -147,7 +157,23 @@ export default function Menu() {
               );
             })}
         </div>
+        <button onClick={openModal}>
+          <div
+            className={
+              "fixed bg-black bottom-4 right-4 items-center justify-center py-6 px-8 flex rounded-full"
+            }
+          >
+            <div className="text-white">+</div>
+          </div>
+        </button>
       </div>
+      <SlideOver
+        open={showSlideOver}
+        onClose={onCloseSlideOver}
+        isLoading={false}
+      >
+        <CreateMenuForm onClose={onCloseSlideOver} />
+      </SlideOver>
     </>
   );
 }

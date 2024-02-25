@@ -9,7 +9,7 @@ export default function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const supabase = createClientComponentClient();
-  const { push } = useRouter();
+  const router = useRouter();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -18,8 +18,12 @@ export default function LoginForm() {
         email: username,
         password: password,
       });
-      if (!error && data.user) {
-        push("/dashboard");
+
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("*");
+      if (!error && profileData && profileData.length > 0) {
+        router.push(`/dashboard/${profileData[0].restaurant_id}`);
       }
     } catch (e) {
       // eslint-disable-next-line no-console

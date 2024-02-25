@@ -7,13 +7,18 @@ import { cookies } from "next/headers";
 export const dynamic = "force-dynamic";
 
 export const revalidate = 60;
-export default async function Order() {
+export default async function Order({
+  params,
+}: {
+  params: { restaurantId: string };
+}) {
+  const { restaurantId } = params;
   try {
     const supabase = createServerComponentClient({ cookies });
     const { data } = await supabase
       .from(COLLECTIONS.ORDERS)
       .select()
-      .eq("restaurant_id", "84") //TODO: remove the stubbed resturant id
+      .eq("restaurant_id", restaurantId) //TODO: remove the stubbed resturant id
       .order("id", { ascending: false });
     return (
       data &&

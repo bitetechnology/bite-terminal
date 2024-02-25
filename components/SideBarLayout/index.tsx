@@ -15,7 +15,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { InboxIcon } from "@heroicons/react/24/solid";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { classNames } from "@/utils/classNames";
 
 type NavigationItem = {
@@ -25,15 +25,27 @@ type NavigationItem = {
   current: boolean;
 };
 
-const initialNavigation: NavigationItem[] = [
-  { name: "Dashboard", href: "/dashboard", icon: HomeIcon, current: true },
+const initialNavigation: (restaurantId: string | null) => NavigationItem[] = (
+  restaurantId: string | null
+) => [
+  {
+    name: "Dashboard",
+    href: `/dashboard/${restaurantId}`,
+    icon: HomeIcon,
+    current: true,
+  },
   {
     name: "Orders",
-    href: "/dashboard/orders",
+    href: `/dashboard/${restaurantId}/orders`,
     icon: InboxIcon,
     current: false,
   },
-  { name: "Menu", href: "/dashboard/menu", icon: FolderIcon, current: false },
+  {
+    name: "Menu",
+    href: `/dashboard/${restaurantId}/menu`,
+    icon: FolderIcon,
+    current: false,
+  },
 ];
 
 const userNavigation = [{ name: "Sign out", href: "#" }];
@@ -43,8 +55,8 @@ export default function SideBarLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [navigation, setNavigation] =
-    useState<NavigationItem[]>(initialNavigation);
+  const params = useParams<{ restaurantId: string }>();
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const supabase = createClientComponentClient();
   const { push } = useRouter();
@@ -53,6 +65,9 @@ export default function SideBarLayout({
     await supabase.auth.signOut();
     push("/");
   };
+  const [navigation, setNavigation] = useState<NavigationItem[]>(
+    initialNavigation((params ?? { restaurantId: null }).restaurantId)
+  );
 
   const activeNavigation = navigation.map((item) => ({
     ...item,
@@ -183,8 +198,8 @@ export default function SideBarLayout({
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
                 <li>
                   <ul role="list" className="-mx-2 space-y-1">
-                    {activeNavigation.map((item) => (
-                      <li key={item.name}>
+                    {activeNavigation.map((item, index) => (
+                      <li key={`${item.name}-${index}`}>
                         <a
                           href={item.href}
                           className={classNames(
@@ -222,7 +237,7 @@ export default function SideBarLayout({
         </div>
 
         <div className="lg:pl-72">
-          <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+          <div className="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
             <button
               type="button"
               className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
