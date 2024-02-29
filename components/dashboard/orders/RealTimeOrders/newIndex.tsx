@@ -3,10 +3,10 @@
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@bitetechnology/bite-types";
-import OrderStates from "../OrderStates";
+import OrderStates from "../../../OrderStates";
 import { OrderStatus } from "@/utils/orderStatus";
 import { updateOrder } from "@/utils/updateStatus";
-import TableRow from "../table/row";
+import TableRow from "../../../table/row";
 import { useGroupedOrders } from "@/hooks/useGroupedOrders";
 import { classNames } from "@/utils/classNames";
 

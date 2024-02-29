@@ -1,10 +1,12 @@
 import { Database } from "@bitetechnology/bite-types";
 import React, { useCallback, useState } from "react";
-import SlideOver from "../SlideOver";
+import SlideOver from "../../../../SlideOver";
 import MenuDetail from "../MenuDetail";
 import useSWR, { useSWRConfig } from "swr";
 
-const restaurantId = "84";
+type CategoryResponse = Database["public"]["Tables"]["categories"]["Row"] & {
+  data: Database["public"]["Tables"]["dishes"]["Row"][];
+};
 
 type Props = {
   dish: Database["public"]["Tables"]["dishes"]["Row"];
@@ -15,6 +17,8 @@ type Props = {
     id: Database["public"]["Tables"]["dishes"]["Row"]["id"]
   ) => () => void;
   snoozed?: boolean;
+  categories: CategoryResponse[];
+  restaurantId: string;
 };
 
 type SnoozedDishesMap = {
@@ -26,7 +30,14 @@ type SnoozedDishesMap = {
     | {};
 };
 
-const MenuItem = ({ dish, handleSnooze, handleUnsnooze, snoozed }: Props) => {
+const MenuItem = ({
+  dish,
+  handleSnooze,
+  handleUnsnooze,
+  categories,
+  snoozed,
+  restaurantId,
+}: Props) => {
   const [showSlideOver, setSlideOver] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -79,7 +90,7 @@ const MenuItem = ({ dish, handleSnooze, handleUnsnooze, snoozed }: Props) => {
         setLoading(false);
       }, 4000);
     },
-    [mutate]
+    [mutate, restaurantId]
   );
 
   const handleModifiersUnsnooze = useCallback(
@@ -93,7 +104,7 @@ const MenuItem = ({ dish, handleSnooze, handleUnsnooze, snoozed }: Props) => {
         setLoading(false);
       }, 4000);
     },
-    [mutate]
+    [mutate, restaurantId]
   );
 
   const openModal = useCallback(() => {
@@ -164,6 +175,7 @@ const MenuItem = ({ dish, handleSnooze, handleUnsnooze, snoozed }: Props) => {
         <MenuDetail
           onClose={onCloseSlideOver}
           dish={dish}
+          categories={categories}
           handleSnooze={handleModifiersSnooze}
           handleUnsnooze={handleModifiersUnsnooze}
           snoozedModifierMap={snoozedUnsnoozedMap}

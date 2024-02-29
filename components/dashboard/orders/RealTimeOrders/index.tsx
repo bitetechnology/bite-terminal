@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import OrderSkeleton from "../OrderSkeleton";
-import OrderStates from "../OrderStates";
+import OrderStates from "../../../OrderStates";
 import { Database } from "@bitetechnology/bite-types";
 import { OrderStatus } from "@/utils/orderStatus";
 import { updateOrder } from "@/utils/updateStatus";

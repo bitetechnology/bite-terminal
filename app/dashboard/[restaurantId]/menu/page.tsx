@@ -1,11 +1,11 @@
 "use client";
-import MenuItem from "@/components/MenuItem";
+import MenuItem from "@/components/dashboard/menu/components/MenuItem";
 import { useCallback, useState } from "react";
-import Alert from "@/components/Alert";
+import Alert from "@/components/dashboard/menu/components/Alert";
 import useSWR, { useSWRConfig } from "swr";
 import { Database } from "@bitetechnology/bite-types";
 import SlideOver from "@/components/SlideOver";
-import CreateMenuForm from "@/components/CreateMenuForm";
+import CreateMenuForm from "@/components/dashboard/menu/components/CreateMenuForm";
 
 type CategoryResponse = Database["public"]["Tables"]["categories"]["Row"] & {
   data: Database["public"]["Tables"]["dishes"]["Row"][];
@@ -144,7 +144,9 @@ export default function Menu({ params }: { params: { restaurantId: string } }) {
                         return (
                           <MenuItem
                             key={dish.id}
+                            categories={categories}
                             dish={dish}
+                            restaurantId={restaurantId}
                             handleSnooze={handleSnooze}
                             handleUnsnooze={handleUnsnooze}
                             snoozed={!!snoozedDishesMap?.[dish.id]}
@@ -172,7 +174,13 @@ export default function Menu({ params }: { params: { restaurantId: string } }) {
         onClose={onCloseSlideOver}
         isLoading={false}
       >
-        <CreateMenuForm onClose={onCloseSlideOver} />
+        {categories && (
+          <CreateMenuForm
+            onClose={onCloseSlideOver}
+            categories={categories}
+            restaurantId={restaurantId}
+          />
+        )}
       </SlideOver>
     </>
   );
