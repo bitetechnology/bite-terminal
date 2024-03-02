@@ -45,3 +45,21 @@ export async function POST(
 
   return Response.json(data);
 }
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: { dishId: string } }
+) {
+  const { dishId } = params;
+
+  const { error: dishError } = await supabase
+    .from(COLLECTIONS.DISHES)
+    .delete()
+    .eq("id", dishId);
+
+  if (dishError) {
+    return Response.json(dishError);
+  }
+
+  return Response.json({ success: true });
+}
