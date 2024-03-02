@@ -16,17 +16,30 @@ export async function POST(
       upsert: false,
     });
 
+  //fetch dish original data better to pass it from the body maybe
+  const { data: dishPreviousData, error: dishPreviousError } = await supabase
+    .from(COLLECTIONS.DISHES)
+    .select("*")
+    .eq("id", dishId)
+    .single();
+
   const { data, error } = await supabase
     .from(COLLECTIONS.DISHES)
     .upsert({
+      id: dishId,
       name: body.name,
       description: body.description,
       price: body.price,
-      image_url: uploadImageData ? uploadImageData.path : null, // TODO upload to supabase storage and then get the link
+      image_url: uploadImageData
+        ? uploadImageData.path
+        : dishPreviousData?.image_url
+        ? dishPreviousData?.image_url
+        : null,
     })
-    .eq("id", dishId);
+    .select("*")
+    .single();
 
-  if (error) {
+  if (error || !data) {
     return Response.json(error);
   }
 

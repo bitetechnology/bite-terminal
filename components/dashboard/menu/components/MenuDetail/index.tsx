@@ -55,12 +55,10 @@ const MenuDetail = ({
 
   const updateDish = useCallback(
     async (values: MenuDetailForm) => {
-      const res = await fetch(`/api/dishes/update/${dish.id}`, {
+      await fetch(`/api/dishes/update/${dish.id}`, {
         method: "POST",
         body: JSON.stringify(values),
       });
-      const data = await res.json();
-      return data;
     },
     [dish.id]
   );
