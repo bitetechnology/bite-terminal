@@ -14,4 +14,6 @@ export enum COLLECTIONS {
 export enum NORMALIZED_COLLECTIONS {
   RESTAURANTS_DISHES = "restaurants_dishes",
   DISHES_FOOD_CATEGORIES = "dishes_food_categories",
+  RESTAURANT_FOOD_CATEGORIES = "restaurant_food_categories",
+  RESTAURANTS_CATEGORIES = "restaurants_categories",
 }

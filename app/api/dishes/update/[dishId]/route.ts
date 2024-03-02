@@ -23,12 +23,6 @@ export async function POST(
       description: body.description,
       price: body.price,
       image_url: uploadImageData ? uploadImageData.path : null, // TODO upload to supabase storage and then get the link
-      eat_in_tax: body.eatInTax,
-      deals: body.deals,
-      insertion_date: new Date().toISOString(),
-      max: body.max,
-      min: body.min,
-      category_id: body.categoryId,
     })
     .eq("id", dishId);
 

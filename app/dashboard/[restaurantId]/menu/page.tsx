@@ -6,6 +6,9 @@ import useSWR, { useSWRConfig } from "swr";
 import { Database } from "@bitetechnology/bite-types";
 import SlideOver from "@/components/SlideOver";
 import CreateMenuForm from "@/components/dashboard/menu/components/CreateMenuForm";
+import { Menu as MenuUI } from "@headlessui/react";
+import MenuPopUp from "@/components/dashboard/menu/components/MenuPopUp";
+import CreateCategoryForm from "@/components/dashboard/menu/components/CreateCategoryForm";
 
 type CategoryResponse = Database["public"]["Tables"]["categories"]["Row"] & {
   data: Database["public"]["Tables"]["dishes"]["Row"][];
@@ -15,8 +18,17 @@ export default function Menu({ params }: { params: { restaurantId: string } }) {
   const { restaurantId } = params;
   const [showLoading, setShowLoading] = useState(false);
   const [showSlideOver, setSlideOver] = useState(false);
+  const [showCategorySlideOver, setCategorySlideOver] = useState(false);
 
-  const openModal = useCallback(() => {
+  const openSlideOverCreateCategory = useCallback(() => {
+    setCategorySlideOver(true);
+  }, []);
+
+  const onCloseSlideOverCategory = useCallback(() => {
+    setCategorySlideOver(false);
+  }, []);
+
+  const openSlideOverCreateMenu = useCallback(() => {
     setSlideOver(true);
   }, []);
 
@@ -159,15 +171,17 @@ export default function Menu({ params }: { params: { restaurantId: string } }) {
               );
             })}
         </div>
-        <button onClick={openModal}>
-          <div
-            className={
-              "fixed bg-black bottom-4 right-4 items-center justify-center py-6 px-8 flex rounded-full"
-            }
-          >
-            <div className="text-white">+</div>
+        <MenuUI as="div" className="relative">
+          <div>
+            <MenuUI.Button className="fixed bg-black bottom-4 right-4 items-center justify-center py-6 px-8 flex rounded-full">
+              <div className="text-white">+</div>
+              <MenuPopUp
+                onCreateMenu={openSlideOverCreateMenu}
+                onCreateCategory={openSlideOverCreateCategory}
+              />
+            </MenuUI.Button>
           </div>
-        </button>
+        </MenuUI>
       </div>
       <SlideOver
         open={showSlideOver}
@@ -181,6 +195,16 @@ export default function Menu({ params }: { params: { restaurantId: string } }) {
             restaurantId={restaurantId}
           />
         )}
+      </SlideOver>
+      <SlideOver
+        open={showCategorySlideOver}
+        onClose={onCloseSlideOverCategory}
+        isLoading={false}
+      >
+        <CreateCategoryForm
+          onClose={onCloseSlideOverCategory}
+          restaurantId={restaurantId}
+        />
       </SlideOver>
     </>
   );
