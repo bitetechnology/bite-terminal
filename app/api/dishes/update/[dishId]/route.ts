@@ -9,12 +9,13 @@ export async function POST(
   const { dishId } = params;
   const body = await request.json();
 
-  const { data: uploadImageData } = await supabase.storage
-    .from("restaurant-cover-images")
-    .upload(`${body.restaurantId}/${uuidv4()}`, body.imageUpload, {
-      cacheControl: "3600",
-      upsert: false,
-    });
+  const { data: uploadImageData, error: errorUploadingImage } =
+    await supabase.storage
+      .from("restaurant-cover-images")
+      .upload(`${body.restaurantId}/${uuidv4()}`, body.imageUpload, {
+        cacheControl: "3600",
+        upsert: false,
+      });
 
   //fetch dish original data better to pass it from the body maybe
   const { data: dishPreviousData, error: dishPreviousError } = await supabase

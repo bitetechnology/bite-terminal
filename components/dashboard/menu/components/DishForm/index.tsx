@@ -80,6 +80,7 @@ const DishForm = <
 
   const onSubmit = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
       formik.handleSubmit();
     },
     [formik]

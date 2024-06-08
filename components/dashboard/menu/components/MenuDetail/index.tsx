@@ -1,10 +1,9 @@
 import { Database } from "@bitetechnology/bite-types";
-import { PhotoIcon } from "@heroicons/react/20/solid";
-import { useFormik } from "formik";
 import { useCallback } from "react";
 import useSWR, { useSWRConfig } from "swr";
-import { object } from "yup";
+import { v4 as uuidv4 } from "uuid";
 import DishForm from "../DishForm";
+import supabase from "@/lib/supabaseClient";
 
 type SnoozedDishesMap = {
   [key: string]:
@@ -55,12 +54,33 @@ const MenuDetail = ({
 
   const updateDish = useCallback(
     async (values: MenuDetailForm) => {
+      let imageUrl = dish.image_url;
+
+      if (values.imageUpload) {
+        const { data: uploadImageData, error } = await supabase.storage
+          .from("restaurant-cover-images")
+          .upload(`${dish.id}/${uuidv4()}`, values.imageUpload, {
+            cacheControl: "3600",
+          });
+
+        if (error) {
+          throw new Error("Failed to upload image: " + error.message);
+        }
+
+        // Update imageUrl with the new image path
+        imageUrl = uploadImageData?.path ?? "";
+      }
+
+      // Update the dish details along with the new image URL
       await fetch(`/api/dishes/update/${dish.id}`, {
         method: "POST",
-        body: JSON.stringify(values),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...values, imageUrl }),
       });
     },
-    [dish.id]
+    [dish.id, dish.image_url]
   );
 
   const handleSubmit = useCallback(
