@@ -72,7 +72,11 @@ const MenuDetail = ({
         }
 
         // Update imageUrl with the new image path
-        imageUrl = uploadImageData?.path ?? "";
+        const { data: publicUrlData } = await supabase.storage
+          .from("food-images")
+          .getPublicUrl(uploadImageData?.path);
+
+        imageUrl = publicUrlData.publicUrl;
       }
 
       // Update the dish details along with the new image URL
