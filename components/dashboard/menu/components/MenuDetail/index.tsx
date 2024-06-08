@@ -83,7 +83,7 @@ const MenuDetail = ({
         body: JSON.stringify({ ...values, imageUrl }),
       });
     },
-    [dish.id, dish.image_url]
+    [dish.id, dish.image_url, restaurantId]
   );
 
   const handleSubmit = useCallback(
