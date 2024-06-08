@@ -64,6 +64,7 @@ const MenuDetail = ({
           .from("food-images")
           .upload(`${restaurantId}/${uuidv4()}`, values.imageUpload, {
             cacheControl: "3600",
+            upsert: false,
           });
 
         if (error) {
