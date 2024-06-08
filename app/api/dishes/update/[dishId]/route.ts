@@ -7,12 +7,6 @@ export async function POST(
 ) {
   const { dishId } = params;
   const body = await request.json();
-  //fetch dish original data better to pass it from the body maybe
-  const { data: dishPreviousData, error: dishPreviousError } = await supabase
-    .from(COLLECTIONS.DISHES)
-    .select("*")
-    .eq("id", dishId)
-    .single();
 
   const { data, error } = await supabase
     .from(COLLECTIONS.DISHES)
@@ -21,7 +15,7 @@ export async function POST(
       name: body.name,
       description: body.description,
       price: body.price,
-      image_url: body.imageUpload,
+      image_url: body.imageUrl,
     })
     .select("*")
     .single();
