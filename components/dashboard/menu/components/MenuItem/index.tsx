@@ -175,6 +175,7 @@ const MenuItem = ({
         <MenuDetail
           onClose={onCloseSlideOver}
           dish={dish}
+          restaurantId={restaurantId}
           categories={categories}
           handleSnooze={handleModifiersSnooze}
           handleUnsnooze={handleModifiersUnsnooze}

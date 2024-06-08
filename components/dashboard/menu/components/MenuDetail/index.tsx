@@ -23,6 +23,7 @@ interface MenuDetailProps {
   handleSnooze: (modifierId: number) => () => void;
   handleUnsnooze: (modifierId: number) => () => void;
   snoozedModifierMap?: SnoozedDishesMap;
+  restaurantId: string;
   categories: CategoryResponse[];
   onClose: () => void;
 }
@@ -30,6 +31,7 @@ interface MenuDetailProps {
 type MenuDetailForm = {
   name: string;
   description: string;
+
   imageUpload: File | null;
   price: number;
 };
@@ -37,6 +39,7 @@ type MenuDetailForm = {
 const MenuDetail = ({
   dish,
   handleSnooze,
+  restaurantId,
   handleUnsnooze,
   snoozedModifierMap,
   categories,
@@ -58,8 +61,8 @@ const MenuDetail = ({
 
       if (values.imageUpload) {
         const { data: uploadImageData, error } = await supabase.storage
-          .from("restaurant-cover-images")
-          .upload(`${dish.id}/${uuidv4()}`, values.imageUpload, {
+          .from("food-images")
+          .upload(`${restaurantId}/${uuidv4()}`, values.imageUpload, {
             cacheControl: "3600",
           });
 
