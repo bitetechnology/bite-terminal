@@ -57,6 +57,7 @@ const CreateMenuForm = ({
           name: "",
           description: "",
           price: 0,
+          deals: false,
           imageUpload: null,
           imagePreview: "",
           ingredients: "",
