@@ -13,6 +13,7 @@ export async function POST(
     .upsert({
       id: dishId,
       name: body.name,
+      deals: body.deals,
       description: body.description,
       price: body.price,
       image_url: body.imageUrl,

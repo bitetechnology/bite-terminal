@@ -31,7 +31,7 @@ interface MenuDetailProps {
 type MenuDetailForm = {
   name: string;
   description: string;
-
+  deals: boolean;
   imageUpload: File | null;
   price: number;
 };
@@ -124,6 +124,7 @@ const MenuDetail = ({
           imageUpload: null,
           price: dish.price ?? 0,
           ingredients: "",
+          deals: dish.deals ?? false,
           imagePreview: dish.image_url ?? "",
           category: dish.category_id
             ? categories.find(

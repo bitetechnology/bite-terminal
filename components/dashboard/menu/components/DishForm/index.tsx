@@ -1,6 +1,6 @@
 import { Database } from "@bitetechnology/bite-types";
 import { useFormik } from "formik";
-import { mixed, number, object, string } from "yup";
+import { boolean, mixed, number, object, string } from "yup";
 import ListSelect from "../ListSelect";
 import { ExclamationCircleIcon } from "@heroicons/react/20/solid";
 import { useCallback } from "react";
@@ -51,6 +51,7 @@ const DishForm = <
     description: string;
     price: number;
     imageUpload: File | null;
+    deals: boolean;
     imagePreview: string;
     ingredients: string;
     category: CategoryResponse;
@@ -73,6 +74,7 @@ const DishForm = <
       name: string().required(),
       description: string().required(),
       price: number().required(),
+      deals: boolean().notRequired(),
       imageUpload: mixed().notRequired(),
       ingredients: string(),
     }),
@@ -274,6 +276,35 @@ const DishForm = <
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
               {formik.errors.price && (
+                <div className="text-red-600 text-sm" id={"price-error"}>
+                  {"you need to insert a valid value for the price"}
+                </div>
+              )}
+            </div>
+            <p className="mt-3 text-sm leading-6 text-gray-600">
+              {`The price are base of 100, for example ${
+                formik.values.price
+              } = ${formik.values.price ? formik.values.price / 100 : 0}€`}
+            </p>
+          </div>
+          <div className="sm:col-span-3">
+            <label
+              htmlFor="price"
+              className="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Deal?
+            </label>
+            <div className="mt-2">
+              <input
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                type="checkbox"
+                name="deals"
+                checked={formik.values.deals}
+                id="deals"
+                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+              />
+              {formik.errors.deals && (
                 <div className="text-red-600 text-sm" id={"price-error"}>
                   {"you need to insert a valid value for the price"}
                 </div>
