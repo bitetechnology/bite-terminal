@@ -1,5 +1,5 @@
 import { Database } from "@bitetechnology/bite-types";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import useSWR, { useSWRConfig } from "swr";
 import { v4 as uuidv4 } from "uuid";
 import DishForm from "../DishForm";
@@ -53,10 +53,13 @@ const MenuDetail = ({
     revalidateOnFocus: false,
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const { mutate } = useSWRConfig();
 
   const updateDish = useCallback(
     async (values: MenuDetailForm) => {
+      setIsLoading(true);
       let imageUrl = dish.image_url;
 
       if (values.imageUpload) {
@@ -68,6 +71,7 @@ const MenuDetail = ({
           });
 
         if (error) {
+          setIsLoading(false);
           throw new Error("Failed to upload image: " + error.message);
         }
 
@@ -87,15 +91,21 @@ const MenuDetail = ({
         },
         body: JSON.stringify({ ...values, imageUrl }),
       });
+      setIsLoading(false);
     },
     [dish.id, dish.image_url, restaurantId]
   );
 
   const handleSubmit = useCallback(
     (values: MenuDetailForm) => {
+      setIsLoading(true);
       mutate(`/api/dishes/${dish.id}`, updateDish(values));
+      setIsLoading(false);
+      if (!isLoading) {
+        onClose();
+      }
     },
-    [dish.id, mutate, updateDish]
+    [dish.id, isLoading, mutate, onClose, updateDish]
   );
 
   return (

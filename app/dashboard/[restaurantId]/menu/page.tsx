@@ -79,6 +79,19 @@ export default function Menu({ params }: { params: { restaurantId: string } }) {
     return data;
   };
 
+  const handleDelete = useCallback(
+    (dishId: string) => async () => {
+      const res = await fetch(`/api/dishes/update/${dishId}`, {
+        method: "DELETE",
+        body: JSON.stringify({ dishId }),
+      });
+      if (res.ok) {
+        mutate(`/api/categories/${restaurantId}`);
+      }
+    },
+    [mutate, restaurantId]
+  );
+
   const handleSnooze = useCallback(
     (dishId: string) => async () => {
       mutate(
@@ -160,6 +173,7 @@ export default function Menu({ params }: { params: { restaurantId: string } }) {
                             dish={dish}
                             restaurantId={restaurantId}
                             handleSnooze={handleSnooze}
+                            handleDelete={handleDelete}
                             handleUnsnooze={handleUnsnooze}
                             snoozed={!!snoozedDishesMap?.[dish.id]}
                           />

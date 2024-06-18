@@ -13,6 +13,9 @@ type Props = {
   handleSnooze: (
     id: Database["public"]["Tables"]["dishes"]["Row"]["id"]
   ) => () => void;
+  handleDelete: (
+    id: Database["public"]["Tables"]["dishes"]["Row"]["id"]
+  ) => () => void;
   handleUnsnooze: (
     id: Database["public"]["Tables"]["dishes"]["Row"]["id"]
   ) => () => void;
@@ -34,6 +37,7 @@ const MenuItem = ({
   dish,
   handleSnooze,
   handleUnsnooze,
+  handleDelete,
   categories,
   snoozed,
   restaurantId,
@@ -160,6 +164,12 @@ const MenuItem = ({
               Snooze<span className="sr-only">{dish.name}</span>
             </a>
           )}
+          <a
+            className="relative flex items-center justify-center rounded-md border border-transparent bg-red-700 px-8 py-2 text-sm font-medium text-white hover:bg-red-500 mt-2"
+            onClick={handleDelete(dish.id)}
+          >
+            Delete<span className="sr-only">, {dish.name}</span>
+          </a>
         </div>
       </div>
       <SlideOver
