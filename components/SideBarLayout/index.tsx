@@ -46,6 +46,12 @@ const initialNavigation: (restaurantId: string | null) => NavigationItem[] = (
     icon: FolderIcon,
     current: false,
   },
+  {
+    name: "Generate your QR codes",
+    href: `/dashboard/${restaurantId}/generate-codes`,
+    icon: FolderIcon,
+    current: false,
+  },
 ];
 
 const userNavigation = [{ name: "Sign out", href: "#" }];
