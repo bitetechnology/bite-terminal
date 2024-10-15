@@ -6,23 +6,32 @@ export const createRoundedCanvas = (
   tableNumber: number
 ): HTMLCanvasElement => {
   const canvas = document.createElement("canvas");
+
+  // Variables for spacing
+  const padding = 20; // Padding around the image
+  const textMargin = 5; // Margin between the image and the table number text
+  const textHeight = 25; // Approximate height of the text area
+
+  // Increase the canvas height to accommodate the text and margins
   canvas.width = width;
-  canvas.height = height;
+  canvas.height = height + textMargin + textHeight;
+
   const ctx = canvas.getContext("2d");
 
   if (ctx) {
-    const padding = 20; // Adjust this value for more or less padding
+    // Define the new height for the rounded rectangle
+    const rectHeight = height + textMargin + textHeight;
 
     // Draw the background (green) with rounded corners
-    ctx.fillStyle = "green"; // Set your desired background color
+    ctx.fillStyle = "#14de91"; // Set your desired background color
     ctx.beginPath();
     ctx.moveTo(borderRadius, 0);
     ctx.lineTo(width - borderRadius, 0);
     ctx.quadraticCurveTo(width, 0, width, borderRadius);
-    ctx.lineTo(width, height - borderRadius);
-    ctx.quadraticCurveTo(width, height, width - borderRadius, height);
-    ctx.lineTo(borderRadius, height);
-    ctx.quadraticCurveTo(0, height, 0, height - borderRadius);
+    ctx.lineTo(width, rectHeight - borderRadius);
+    ctx.quadraticCurveTo(width, rectHeight, width - borderRadius, rectHeight);
+    ctx.lineTo(borderRadius, rectHeight);
+    ctx.quadraticCurveTo(0, rectHeight, 0, rectHeight - borderRadius);
     ctx.lineTo(0, borderRadius);
     ctx.quadraticCurveTo(0, 0, borderRadius, 0);
     ctx.closePath();
@@ -34,10 +43,10 @@ export const createRoundedCanvas = (
     ctx.moveTo(borderRadius, 0);
     ctx.lineTo(width - borderRadius, 0);
     ctx.quadraticCurveTo(width, 0, width, borderRadius);
-    ctx.lineTo(width, height - borderRadius);
-    ctx.quadraticCurveTo(width, height, width - borderRadius, height);
-    ctx.lineTo(borderRadius, height);
-    ctx.quadraticCurveTo(0, height, 0, height - borderRadius);
+    ctx.lineTo(width, rectHeight - borderRadius);
+    ctx.quadraticCurveTo(width, rectHeight, width - borderRadius, rectHeight);
+    ctx.lineTo(borderRadius, rectHeight);
+    ctx.quadraticCurveTo(0, rectHeight, 0, rectHeight - borderRadius);
     ctx.lineTo(0, borderRadius);
     ctx.quadraticCurveTo(0, 0, borderRadius, 0);
     ctx.closePath();
@@ -58,8 +67,10 @@ export const createRoundedCanvas = (
     ctx.font = "20px Arial";
     ctx.fillStyle = "black";
     ctx.textAlign = "center";
-    ctx.textBaseline = "bottom";
-    ctx.fillText(`Table ${tableNumber}`, width / 2, height - 10);
+    ctx.textBaseline = "top";
+
+    // Position the text below the image with specified margin
+    ctx.fillText(`Table ${tableNumber}`, width / 2, height + textMargin);
   }
 
   return canvas;
