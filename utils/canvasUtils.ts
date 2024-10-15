@@ -8,8 +8,8 @@ export const createRoundedCanvas = (
   const canvas = document.createElement("canvas");
 
   // Define padding around the image
-  const padding = 20; // Adjust as needed
-  const additionalSpace = 30; // Space for the table number text
+  const padding = 50; // Adjust as needed
+  const additionalSpace = 50; // Space for the table number text
 
   canvas.width = width + padding * 2;
   canvas.height = height + padding * 2 + additionalSpace;
