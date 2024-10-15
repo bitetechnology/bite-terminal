@@ -46,7 +46,8 @@ const Home = ({ params }: { params: { restaurantId: string } }) => {
             image,
             qrCode._options.width,
             qrCode._options.height,
-            20 // Adjust border radius as needed
+            20, // Adjust border radius as needed
+            i
           );
 
           // Convert canvas to Blob
